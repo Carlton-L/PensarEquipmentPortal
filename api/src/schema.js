@@ -2,16 +2,35 @@ const { gql } = require("apollo-server");
 
 const typeDefs = gql`
   type Query {
-    equipment(input: EquipmentInput): String
+    """
+    Retrieves a single equipment record from a given equipment ID
+    """
+    equipment(input: EquipmentIdInput): Equipment!
+    """
+    Retrieves a single user record from a given user's ID
+    """
+    user(input: UserIdInput): User!
+    """
+    Retrieves an equipment record from a given equipment QR code integer
+    """
+    equipmentByQR(input: QRInput): Equipment!
   }
 
-  input EquipmentInput {
-    name: String
+  input UserIdInput {
+    id: ID!
+  }
+
+  input EquipmentIdInput {
+    id: ID!
+  }
+
+  input QRInput {
+    qr: Int
   }
 
   type Equipment {
     id: ID!
-    psn: Int!
+    qr: Int!
     description: String!
     mfgPn: String
     mfgSn: String
