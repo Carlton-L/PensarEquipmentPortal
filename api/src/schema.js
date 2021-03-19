@@ -1,5 +1,5 @@
-const { gql } = require("apollo-server");
-const manufacturerList = require("./etc/manufacturers");
+const { gql } = require('apollo-server');
+const manufacturerList = require('./etc/manufacturers');
 
 const typeDefs = gql`
   type Query {
@@ -17,8 +17,19 @@ const typeDefs = gql`
     equipmentByQR(input: QRInput): Equipment!
   }
 
+  type Mutation {
+    """Adds a new user (usually run after OAuth for a user that doesn't already exist)"""
+    addUser(input: AddUserInput): User!
+  }
+
   input UserIdInput {
     id: ID!
+  }
+
+  input AddUserInput {
+    id: ID!
+    name: String!
+    email: String!
   }
 
   input EquipmentIdInput {
