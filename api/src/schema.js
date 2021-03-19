@@ -1,4 +1,5 @@
 const { gql } = require("apollo-server");
+const manufacturerList = require("./etc/manufacturers");
 
 const typeDefs = gql`
   type Query {
@@ -26,6 +27,10 @@ const typeDefs = gql`
 
   input QRInput {
     qr: Int
+  }
+
+  enum Manufacturer {
+    ...manufacturerList
   }
 
   type Equipment {
