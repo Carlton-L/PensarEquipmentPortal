@@ -1,5 +1,5 @@
-const { gql } = require('apollo-server');
-const manufacturerList = require('./etc/manufacturers');
+const { gql } = require("apollo-server");
+const manufacturerList = require("./etc/manufacturers");
 
 const typeDefs = gql`
   type Query {
@@ -18,7 +18,9 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    """Adds a new user (usually run after OAuth for a user that doesn't already exist)"""
+    """
+    Adds a new user (usually run after OAuth for a user that doesn't already exist)
+    """
     addUser(input: AddUserInput): User!
   }
 
@@ -38,10 +40,6 @@ const typeDefs = gql`
 
   input QRInput {
     qr: Int
-  }
-
-  enum Manufacturer {
-    ...manufacturerList
   }
 
   type Equipment {
