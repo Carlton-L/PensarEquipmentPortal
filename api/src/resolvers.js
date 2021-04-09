@@ -1,7 +1,7 @@
 module.exports = {
   Query: {
-    equipment(_, __, ___) {
-      return "Query Result`";
+    equipmentById(_, __, ___) {
+      return { id: "dfnsjdfns" };
     },
   },
   File: {

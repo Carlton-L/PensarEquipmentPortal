@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Pensar Equipment Portal",
   "main": "index.js",
-  "devDependencies": {},
   "dependencies": {
     "apollo-server": "^2.21.2",
     "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
+    "mongoose": "^5.12.3",
     "nanoid": "^3.1.22"
   },
   "scripts": {

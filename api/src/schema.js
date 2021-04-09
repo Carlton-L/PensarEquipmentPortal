@@ -2,11 +2,13 @@ const { gql } = require("apollo-server");
 const manufacturerList = require("./etc/manufacturers");
 
 const typeDefs = gql`
-  type Query {
+  directive @authenticated on OBJECT
+
+  type Query @authenticated {
     """
     Retrieves a single equipment record from a given equipment ID
     """
-    equipment(input: EquipmentIdInput): Equipment!
+    equipmentById(input: EquipmentIdInput): Equipment!
     """
     Retrieves a single user record from a given user's ID
     """
@@ -15,9 +17,13 @@ const typeDefs = gql`
     Retrieves an equipment record from a given equipment QR code integer
     """
     equipmentByQR(input: QRInput): Equipment!
+    """
+    Retrieves an array of equipment using optional filters
+    """
+    equipment(input: EquipmentInput): [Equipment]!
   }
 
-  type Mutation {
+  type Mutation @authenticated {
     """
     Adds a new user (usually run after OAuth for a user that doesn't already exist)
     """
@@ -42,20 +48,37 @@ const typeDefs = gql`
     qr: Int
   }
 
+  enum FilterAvailability {
+    ALL
+    AVAILABLE
+    UNAVAILABLE
+  }
+
+  enum FilterCalibration {
+    ALL
+    CALIBRATED
+    UNCALIBRATED
+  }
+
+  input EquipmentInput {
+    availability: FilterAvailability
+  }
+
   type Equipment {
     id: ID!
     qr: Int!
     description: String!
+    mfg: String!
     mfgPn: String
     mfgSn: String
-    principals: [Equipment]!
-    acessories: [Equipment]!
+    principals: [Equipment]! 
+    acessories: [Equipment]! 
     log: [Log]!
-    schedule: [Reservation]!
-    calibrations: [Calibration]!
-    receipts: [Receipt]!
+    schedule: [Reservation]! 
+    calibrations: [Calibration]! 
+    receipts: [Receipt]! 
     comments: [Comment]!
-    image: String
+    image: String 
     isActive: Boolean!
     created: String!
     createdBy: ID!
