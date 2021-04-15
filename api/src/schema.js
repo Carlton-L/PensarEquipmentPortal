@@ -71,14 +71,14 @@ const typeDefs = gql`
     mfg: String!
     mfgPn: String
     mfgSn: String
-    principals: [Equipment]! 
-    acessories: [Equipment]! 
+    principals: [Equipment]!
+    acessories: [Equipment]!
     log: [Log]!
-    schedule: [Reservation]! 
-    calibrations: [Calibration]! 
-    receipts: [Receipt]! 
+    schedule: [Reservation]!
+    calibrations: [Calibration]!
+    receipts: [Receipt]!
     comments: [Comment]!
-    image: String 
+    image: String
     isActive: Boolean!
     created: String!
     createdBy: ID!
@@ -130,7 +130,7 @@ const typeDefs = gql`
     modifiedBy: ID
   }
 
-  type Calibration implements File {
+  type Calibration implements File @authenticated {
     id: ID!
     equipment: Equipment!
     file: String! @authenticated
@@ -141,7 +141,7 @@ const typeDefs = gql`
     modifiedBy: ID
   }
 
-  type Receipt implements File {
+  type Receipt implements File @authenticated {
     id: ID!
     equipment: Equipment!
     file: String! @authenticated
