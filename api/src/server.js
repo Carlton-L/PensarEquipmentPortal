@@ -4,6 +4,7 @@ const msal = require("@azure/msal-node");
 
 const typeDefs = require("./schema");
 const resolvers = require("./resolvers");
+const { AuthenticationDirective } = require("./directives");
 const { getUser } = require("./auth");
 const { config } = require("/config/MSAL");
 
