@@ -4,11 +4,14 @@
   "description": "Pensar Equipment Portal",
   "main": "index.js",
   "dependencies": {
-    "apollo-server": "^2.21.2",
+    "@azure/msal-node": "^1.0.1",
+    "apollo-server-express": "^2.22.2",
+    "express": "^4.17.1",
     "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
     "mongoose": "^5.12.3",
-    "nanoid": "^3.1.22"
+    "nanoid": "^3.1.22",
+    "node-fetch": "^2.6.1"
   },
   "scripts": {
     "server": "node api/src/server.js",

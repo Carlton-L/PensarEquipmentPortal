@@ -1,10 +1,10 @@
-const { gql } = require("apollo-server");
+const { gql } = require("apollo-server-express");
 const manufacturerList = require("./etc/manufacturers");
 
 const typeDefs = gql`
-  directive @authenticated on OBJECT
+  directive @authenticated on OBJECT | FIELD_DEFINITION
 
-  type Query @authenticated {
+  type Query {
     """
     Retrieves a single equipment record from a given equipment ID
     """
@@ -133,7 +133,7 @@ const typeDefs = gql`
   type Calibration implements File {
     id: ID!
     equipment: Equipment!
-    file: String!
+    file: String! @authenticated
     calibrated: String!
     created: String!
     createdBy: ID!
@@ -144,7 +144,7 @@ const typeDefs = gql`
   type Receipt implements File {
     id: ID!
     equipment: Equipment!
-    file: String!
+    file: String! @authenticated
     purchased: String
     created: String!
     createdBy: ID!
@@ -154,10 +154,9 @@ const typeDefs = gql`
 
   type Comment {
     id: ID!
-    user: ID!
-    userName: String!
-    userEmail: String!
+    user: User!
     equipment: Equipment!
+    content: String
     created: String!
     createdBy: ID!
     modified: String
