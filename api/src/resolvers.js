@@ -10,4 +10,10 @@ module.exports = {
       return "Receipt";
     },
   },
+  Calibration: {
+    file: (_, __, context) => {
+      console.log(context);
+      return "filename";
+    },
+  },
 };
