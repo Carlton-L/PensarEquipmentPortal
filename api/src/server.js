@@ -11,6 +11,7 @@ const authRouter = require("./routes/auth");
 const app = express();
 
 // Mount authentication router
+// This router deals exclusively with logging in the user and returning a token and user object to the client
 app.use("/auth", authRouter);
 
 // Create new apollo server instance
