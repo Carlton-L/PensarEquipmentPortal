@@ -8,6 +8,11 @@ const { AuthenticationDirective } = require("./directives");
 const { getUser } = require("./auth");
 const { config } = require("/config/MSAL");
 
+// Create msal application object
+const cca = new msal.ConfidentialClientApplication(config);
+// Create new express app
+const app = express();
+// Create new apollo server instance
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -21,12 +26,7 @@ const server = new ApolloServer({
   },
   mocks: true,
 });
-
-// Create msal application object
-const cca = new msal.ConfidentialClientApplication(config);
-// Create new express app
-const app = express();
-
+// Apply express middleware
 server.applyMiddleWare({ app });
 
 // Authentication Route -
