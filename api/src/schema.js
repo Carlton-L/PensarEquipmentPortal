@@ -130,7 +130,7 @@ const typeDefs = gql`
     modifiedBy: ID
   }
 
-  type Calibration implements File @authenticated {
+  type Calibration implements File {
     id: ID!
     equipment: Equipment!
     file: String! @authenticated
@@ -141,7 +141,7 @@ const typeDefs = gql`
     modifiedBy: ID
   }
 
-  type Receipt implements File @authenticated {
+  type Receipt implements File {
     id: ID!
     equipment: Equipment!
     file: String! @authenticated
