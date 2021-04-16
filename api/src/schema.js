@@ -28,16 +28,29 @@ const typeDefs = gql`
     Adds a new user (usually run after OAuth for a user that doesn't already exist)
     """
     addUser(input: AddUserInput): User!
+    """
+    Checks out an item to a user and project code
+    """
+    checkOut(input: CheckOutInput): Log!
+    """
+    Checks in an item back to the lab
+    """
+    checkIn(input: CheckInInput): Log!
+  }
+
+  input CheckOutInput {
+    user: User!
+    equipment: Equipment!
+    project: String!
+  }
+
+  input CheckInInput {
+    user: User!
+    equipment: Equipment!
   }
 
   input UserIdInput {
     id: ID!
-  }
-
-  input AddUserInput {
-    id: ID!
-    name: String!
-    email: String!
   }
 
   input EquipmentIdInput {
@@ -78,12 +91,19 @@ const typeDefs = gql`
     calibrations: [Calibration]!
     receipts: [Receipt]!
     comments: [Comment]!
-    image: String
+    image: Image
     isActive: Boolean!
     created: String!
     createdBy: ID!
     modified: String
     modifiedBy: ID
+  }
+
+  type Image {
+    id: ID!
+    deleteHash: ID!
+    type: String!
+    url: String!
   }
 
   """
@@ -92,9 +112,7 @@ const typeDefs = gql`
   type Log {
     id: ID!
     equipment: Equipment!
-    user: ID!
-    userName: String!
-    userEmail: String!
+    user: User!
     checkOut: String!
     checkIn: String
     created: String!
