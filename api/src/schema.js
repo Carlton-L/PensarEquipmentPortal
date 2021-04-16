@@ -28,6 +28,16 @@ const typeDefs = gql`
     Adds a new user (usually run after OAuth for a user that doesn't already exist)
     """
     addUser(input: AddUserInput): User!
+
+    """
+    Adds a new equipment record to the database
+    """
+    addEquipment(input: AddEquipmentInput): Equipment!
+    """
+    Edits an existing equipment record
+    """
+    editEquipment(input: EditEquipmentInput): Equipment!
+
     """
     Checks out an item to a user and project code
     """
@@ -36,25 +46,73 @@ const typeDefs = gql`
     Checks in an item back to the lab
     """
     checkIn(input: CheckInInput): Log!
+
+    """
+    Upload an image via URL
+    """
+    uploadImage(input: UploadImageInput): Image!
+    """
+    Changes an equipment record's associated image to another existing image
+    """
+    changeImage(input: ChangeImageInput): Equipment!
   }
 
   input CheckOutInput {
-    user: User!
-    equipment: Equipment!
+    user: ID!
+    equipment: ID!
     project: String!
   }
 
   input CheckInInput {
-    user: User!
-    equipment: Equipment!
+    user: ID!
+    equipment: ID!
+  }
+
+  input UploadImageInput {
+    url: String!
+  }
+
+  input ChangeImageInput {
+    equipment: ID!
+    image: ImageInput!
+  }
+
+  input ImageInput {
+    id: ID!
+    deleteHash: ID!
+    type: String!
+    url: String!
+  }
+
+  input AddEquipmentInput {
+    user: ID!
+    description: String!
+    mfg: String!
+    mfgPn: String!
+    mfgSn: String!
+  }
+
+  input EditEquipmentInput {
+    id: ID!
+    qr: String
+    description: String
+    mfg: String
+    mfgPn: String
+    mfgSn: String
+    isActive: Boolean
+    modifiedBy: ID!
   }
 
   input UserIdInput {
-    id: ID!
+    user: ID!
   }
 
   input EquipmentIdInput {
-    id: ID!
+    equipment: ID!
+  }
+
+  input EquipmentInput {
+    availability: FilterAvailability
   }
 
   input QRInput {
@@ -73,19 +131,17 @@ const typeDefs = gql`
     UNCALIBRATED
   }
 
-  input EquipmentInput {
-    availability: FilterAvailability
-  }
-
   type Equipment {
     id: ID!
-    qr: Int!
+    qr: String!
     description: String!
     mfg: String!
-    mfgPn: String
-    mfgSn: String
+    mfgPn: String!
+    mfgSn: String!
+    """
     principals: [Equipment]!
     acessories: [Equipment]!
+    """
     log: [Log]!
     schedule: [Reservation]!
     calibrations: [Calibration]!
