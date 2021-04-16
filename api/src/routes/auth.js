@@ -67,7 +67,13 @@ router.get("/redirect", (req, res) => {
 
       // Sets the HTTP Set-Cookie header to the idToken value
       res.cookie("authToken", idToken, { httpOnly: true });
-      res.cookie("pensarUser", { name, oid, preferred_username });
+
+      // Sets the HTTP Set-Cookie header to the user decoded from the idToken
+      res.cookie(
+        "pensarUser",
+        { name, oid, preferred_username },
+        { httpOnly: true }
+      );
 
       // Responds with the user
       res.status(200).send({ name, oid, preferred_username });
