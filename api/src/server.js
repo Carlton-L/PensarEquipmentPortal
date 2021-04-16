@@ -21,8 +21,14 @@ const server = new ApolloServer({
   context: ({ req }) => {
     // const token = req.headers.cookies.authToken;
     const token = process.env.TEST_TOKEN;
+    // const user = req.headers.cookies.pensarUser;
+    const user = {
+      oid: "12345",
+      name: "carltonl@pensardevelopment.com",
+      preferred_username: "carltonl",
+    };
     return {
-      user: {},
+      user: user,
       authenticated: false,
       authToken: token,
     };
