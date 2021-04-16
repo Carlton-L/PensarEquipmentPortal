@@ -25,25 +25,20 @@ const typeDefs = gql`
 
   type Mutation @authenticated {
     """
-    Adds a new user (usually run after OAuth for a user that doesn't already exist)
-    """
-    addUser(input: AddUserInput): User!
-
-    """
-    Adds a new equipment record to the database
+    Add a new equipment record to the database
     """
     addEquipment(input: AddEquipmentInput): Equipment!
     """
-    Edits an existing equipment record
+    Edit an existing equipment record
     """
     editEquipment(input: EditEquipmentInput): Equipment!
 
     """
-    Checks out an item to a user and project code
+    Check out an item to a user and project code
     """
     checkOut(input: CheckOutInput): Log!
     """
-    Checks in an item back to the lab
+    Check in an item back to the lab
     """
     checkIn(input: CheckInInput): Log!
 
@@ -52,19 +47,25 @@ const typeDefs = gql`
     """
     uploadImage(input: UploadImageInput): Image!
     """
-    Changes an equipment record's associated image to another existing image
+    Change an equipment record's associated image to another existing image
     """
     changeImage(input: ChangeImageInput): Equipment!
   }
 
+  input UserInput {
+    id: ID!
+    name: String!
+    email: String!
+  }
+
   input CheckOutInput {
-    user: ID!
+    user: UserInput!
     equipment: ID!
     project: String!
   }
 
   input CheckInInput {
-    user: ID!
+    user: UserInput!
     equipment: ID!
   }
 
@@ -85,7 +86,7 @@ const typeDefs = gql`
   }
 
   input AddEquipmentInput {
-    user: ID!
+    user: UserInput!
     description: String!
     mfg: String!
     mfgPn: String!
@@ -138,10 +139,8 @@ const typeDefs = gql`
     mfg: String!
     mfgPn: String!
     mfgSn: String!
-    """
-    principals: [Equipment]!
-    acessories: [Equipment]!
-    """
+    #principals: [Equipment]!
+    #acessories: [Equipment]!
     log: [Log]!
     schedule: [Reservation]!
     calibrations: [Calibration]!
@@ -150,9 +149,9 @@ const typeDefs = gql`
     image: Image
     isActive: Boolean!
     created: String!
-    createdBy: ID!
+    createdBy: User!
     modified: String
-    modifiedBy: ID
+    modifiedBy: User
   }
 
   type Image {
@@ -172,9 +171,9 @@ const typeDefs = gql`
     checkOut: String!
     checkIn: String
     created: String!
-    createdBy: ID!
+    createdBy: User!
     modified: String
-    modifiedBy: ID
+    modifiedBy: User
   }
 
   """
@@ -189,9 +188,9 @@ const typeDefs = gql`
     start: String!
     end: String!
     created: String!
-    createdBy: ID!
+    createdBy: User!
     modified: String
-    modifiedBy: ID
+    modifiedBy: User
   }
 
   interface File {
@@ -199,9 +198,9 @@ const typeDefs = gql`
     equipment: Equipment!
     file: String!
     created: String!
-    createdBy: ID!
+    createdBy: User!
     modified: String
-    modifiedBy: ID
+    modifiedBy: User
   }
 
   type Calibration implements File {
@@ -210,9 +209,9 @@ const typeDefs = gql`
     file: String! @authenticated
     calibrated: String!
     created: String!
-    createdBy: ID!
+    createdBy: User!
     modified: String
-    modifiedBy: ID
+    modifiedBy: User
   }
 
   type Receipt implements File {
@@ -221,9 +220,9 @@ const typeDefs = gql`
     file: String! @authenticated
     purchased: String
     created: String!
-    createdBy: ID!
+    createdBy: User!
     modified: String
-    modifiedBy: ID
+    modifiedBy: User
   }
 
   type Comment {
@@ -232,9 +231,9 @@ const typeDefs = gql`
     equipment: Equipment!
     content: String
     created: String!
-    createdBy: ID!
+    createdBy: User!
     modified: String
-    modifiedBy: ID
+    modifiedBy: User
   }
 
   """
