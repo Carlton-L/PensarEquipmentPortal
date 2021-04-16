@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 // Fetch public keys (returns a Promise)
 const getPublicKeys = () => {
   return fetch(
-    "https://login.microsoftonline.com/23a51087-bf44-49a2-ae57-2005668fec39/discovery/v2.0/keys"
+    `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/discovery/v2.0/keys`
   )
     .then((response) => response.json())
     .catch((error) => {
@@ -37,7 +37,7 @@ const getUser = (token) => {
       // Verify the passed in token against the public key certificate
       jwt.verify(token, publicKey, {
         algorithms: ["RS256", "HS256"],
-        audience: "26c3029e-6a32-424d-b557-36430eec07c4",
+        audience: process.env.AZURE_CLIENT_ID,
       });
     });
   return { aud, name, oid, preferred_username };
