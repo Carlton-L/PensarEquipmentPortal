@@ -1,8 +1,9 @@
 const express = require("express");
 const msal = require("@azure/msal-node");
 const jwt = require("jsonwebtoken");
+const fetch = require("node-fetch");
 
-const { config } = require("../../config");
+const { msalConfig: config } = require("../../config");
 
 // Create msal application object
 const cca = new msal.ConfidentialClientApplication(config);
@@ -42,11 +43,13 @@ router.get("/redirect", (req, res) => {
 
       // Decode token and get kid from header
       const decodedToken = jwt.decode(response.idToken, { complete: true });
-      const { name, preferred_username, aud } = decodedToken.payload;
+      const { oid, name, preferred_username, aud } = decodedToken.payload;
       console.log(name, preferred_username, aud);
       const kid = jwt.decode(response.idToken, { complete: true }).header.kid;
       const idToken = response.idToken;
       redirect = response.accountState;
+
+      console.log(idToken);
 
       // Fetch public keys and find matching kid/public key pair and create certificate
       fetch(

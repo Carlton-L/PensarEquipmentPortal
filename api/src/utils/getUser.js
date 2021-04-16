@@ -35,13 +35,11 @@ const getUser = (token) => {
     })
     .then((publicKey) => {
       // Verify the passed in token against the public key certificate
-      jwt.verify(idToken, publicKey, {
+      jwt.verify(token, publicKey, {
         algorithms: ["RS256", "HS256"],
-        audience:
-          "https://login.microsoftonline.com/23a51087-bf44-49a2-ae57-2005668fec39/v2.0",
+        audience: "26c3029e-6a32-424d-b557-36430eec07c4",
       });
     });
-
   return { aud, name, oid, preferred_username };
 };
 

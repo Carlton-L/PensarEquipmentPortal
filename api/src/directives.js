@@ -25,23 +25,24 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
     Object.keys(fields).forEach((fieldName) => {
       const field = fields[fieldName];
       const { resolve = defaultFieldResolver } = field;
-      field.resolve = (...args) => {
+      field.resolve = async (...args) => {
         const context = args[2];
+
+        console.log(context);
 
         // If the user is not authenticated yet, authenticate the user and set authenticated to true
         if (!context.authenticated) {
           console.log("Attempting to authenticate user...");
           try {
-            getUser(context.cookies.authToken);
+            // Get user from a given auth token
+            context.user = await getUser(context.authToken);
           } catch (error) {
             throw new AuthenticationError(
-              `Access Denied: Authentication Failed\n${error}`
+              `Access Denied: Authentication Failed ${error}`
             );
           }
           context.authenticated = true;
         }
-
-        console.log(context);
 
         return resolve.apply(this, args);
       };
