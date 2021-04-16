@@ -8,7 +8,6 @@
     "@azure/msal-node": "^1.0.1",
     "@azure/storage-blob": "^12.5.0",
     "apollo-server-express": "^2.22.2",
-    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
@@ -16,6 +15,9 @@
     "mongoose": "^5.12.3",
     "nanoid": "^3.1.22",
     "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
   },
   "scripts": {
     "server": "node -r dotenv/config api/src/server.js",
