@@ -18,7 +18,7 @@
     "node-fetch": "^2.6.1"
   },
   "scripts": {
-    "server": "node api/src/server.js",
+    "server": "node -r dotenv/config api/src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
