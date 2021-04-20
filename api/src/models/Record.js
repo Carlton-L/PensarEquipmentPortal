@@ -6,7 +6,7 @@ const RecordSchema = mongoose.Schema({
     required: true,
   },
   user: {
-    type: {
+    type: mongoose.Schema({
       id: {
         type: String,
         required: true,
@@ -19,7 +19,7 @@ const RecordSchema = mongoose.Schema({
         type: String,
         required: true,
       },
-    },
+    }),
     required: true,
   },
   start: {
@@ -50,7 +50,7 @@ const RecordSchema = mongoose.Schema({
   },
   createdBy: {
     user: {
-      type: {
+      type: mongoose.Schema({
         id: {
           type: String,
           required: true,
@@ -63,7 +63,7 @@ const RecordSchema = mongoose.Schema({
           type: String,
           required: true,
         },
-      },
+      }),
       required: true,
     },
   },
@@ -73,7 +73,7 @@ const RecordSchema = mongoose.Schema({
   },
   modifiedBy: {
     user: {
-      type: {
+      type: mongoose.Schema({
         id: {
           type: String,
           required: true,
@@ -86,7 +86,7 @@ const RecordSchema = mongoose.Schema({
           type: String,
           required: true,
         },
-      },
+      }),
       required: false,
     },
   },

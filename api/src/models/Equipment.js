@@ -23,7 +23,7 @@ const EquipmentSchema = mongoose.Schema({
   },
   calibrations: [
     {
-      type: {
+      type: mongoose.Schema({
         id: {
           type: String,
           required: true,
@@ -42,7 +42,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         createdBy: {
           user: {
-            type: {
+            type: mongoose.Schema({
               id: {
                 type: String,
                 required: true,
@@ -55,7 +55,7 @@ const EquipmentSchema = mongoose.Schema({
                 type: String,
                 required: true,
               },
-            },
+            }),
             required: true,
           },
         },
@@ -65,7 +65,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         modifiedBy: {
           user: {
-            type: {
+            type: mongoose.Schema({
               id: {
                 type: String,
                 required: true,
@@ -78,17 +78,17 @@ const EquipmentSchema = mongoose.Schema({
                 type: String,
                 required: true,
               },
-            },
+            }),
             required: false,
           },
         },
-      },
+      }),
       required: false,
     },
   ],
   receipts: [
     {
-      type: {
+      type: mongoose.Schema({
         id: {
           type: String,
           required: true,
@@ -103,7 +103,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         createdBy: {
           user: {
-            type: {
+            type: mongoose.Schema({
               id: {
                 type: String,
                 required: true,
@@ -116,7 +116,7 @@ const EquipmentSchema = mongoose.Schema({
                 type: String,
                 required: true,
               },
-            },
+            }),
             required: true,
           },
         },
@@ -126,7 +126,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         modifiedBy: {
           user: {
-            type: {
+            type: mongoose.Schema({
               id: {
                 type: String,
                 required: true,
@@ -139,17 +139,17 @@ const EquipmentSchema = mongoose.Schema({
                 type: String,
                 required: true,
               },
-            },
+            }),
             required: false,
           },
         },
-      },
+      }),
       required: false,
     },
   ],
   comments: [
     {
-      type: {
+      type: mongoose.Schema({
         id: {
           type: String,
           required: true,
@@ -164,7 +164,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         createdBy: {
           user: {
-            type: {
+            type: mongoose.Schema({
               id: {
                 type: String,
                 required: true,
@@ -177,7 +177,7 @@ const EquipmentSchema = mongoose.Schema({
                 type: String,
                 required: true,
               },
-            },
+            }),
             required: true,
           },
         },
@@ -187,7 +187,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         modifiedBy: {
           user: {
-            type: {
+            type: mongoose.Schema({
               id: {
                 type: String,
                 required: true,
@@ -200,16 +200,16 @@ const EquipmentSchema = mongoose.Schema({
                 type: String,
                 required: true,
               },
-            },
+            }),
             required: false,
           },
         },
-      },
+      }),
       required: false,
     },
   ],
   image: {
-    type: {
+    type: mongoose.Schema({
       id: {
         type: String,
         required: true,
@@ -226,7 +226,7 @@ const EquipmentSchema = mongoose.Schema({
         type: String,
         required: true,
       },
-    },
+    }),
     required: false,
   },
   isActive: {
@@ -239,7 +239,7 @@ const EquipmentSchema = mongoose.Schema({
   },
   createdBy: {
     user: {
-      type: {
+      type: mongoose.Schema({
         id: {
           type: String,
           required: true,
@@ -252,7 +252,7 @@ const EquipmentSchema = mongoose.Schema({
           type: String,
           required: true,
         },
-      },
+      }),
       required: true,
     },
   },
@@ -262,7 +262,7 @@ const EquipmentSchema = mongoose.Schema({
   },
   modifiedBy: {
     user: {
-      type: {
+      type: mongoose.Schema({
         id: {
           type: String,
           required: true,
@@ -275,7 +275,7 @@ const EquipmentSchema = mongoose.Schema({
           type: String,
           required: true,
         },
-      },
+      }),
       required: false,
     },
   },
