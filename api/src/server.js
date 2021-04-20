@@ -1,11 +1,17 @@
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
+const connectDB = require("../config/db");
 
 const typeDefs = require("./schema");
 const resolvers = require("./resolvers");
 const { AuthenticationDirective } = require("./directives");
+const Equipment = require("../src/models/Equipment");
+const Record = require("../src/models/Record");
 
 const authRouter = require("./routes/auth");
+
+// Connect to MongoDB
+connectDB();
 
 // Create new express app
 const app = express();
@@ -35,6 +41,10 @@ const server = new ApolloServer({
       user: user,
       authenticated: false,
       authToken: token,
+      models: {
+        Equipment,
+        Record,
+      },
     };
   },
   schemaDirectives: {
