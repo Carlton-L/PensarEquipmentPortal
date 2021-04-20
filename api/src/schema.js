@@ -8,7 +8,7 @@ const typeDefs = gql`
     """
     Retrieves an array of equipment (executed on browse)
     """
-    equipment(): [Equipment]!
+    equipment: [Equipment]!
     """
     Retrieves a single equipment record from a given equipment ID (executed on /:id/)
     """
@@ -23,7 +23,6 @@ const typeDefs = gql`
     Retrieves an equipment record from a given equipment QR code ID (executed on scan)
     """
     equipmentByQR(input: QRInput): Equipment!
-
   }
 
   type Mutation @authenticated {
@@ -113,10 +112,6 @@ const typeDefs = gql`
 
   input EquipmentIdInput {
     equipment: ID!
-  }
-
-  input EquipmentInput {
-    availability: FilterAvailability
   }
 
   input QRInput {
