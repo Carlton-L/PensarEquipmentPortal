@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const RecordSchema = mongoose.Schema({
   equipment: {
-    type: ObjectId,
+    type: mongoose.ObjectId,
     required: true,
   },
   user: {
