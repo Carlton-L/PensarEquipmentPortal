@@ -6,19 +6,22 @@ const typeDefs = gql`
 
   type Query {
     """
-    Retrieves a single equipment record from a given equipment ID
+    Retrieves a single equipment record from a given equipment ID (executed on /:id/)
     """
     equipmentById(input: EquipmentIdInput): Equipment!
+
     """
     Retrieves a single user record from a given user's ID
     """
     user(input: UserIdInput): User!
+
     """
-    Retrieves an equipment record from a given equipment QR code integer
+    Retrieves an equipment record from a given equipment QR code ID (executed on scan)
     """
     equipmentByQR(input: QRInput): Equipment!
+
     """
-    Retrieves an array of equipment using optional filters
+    Retrieves an array of equipment using optional filters (executed on browse)
     """
     equipment(input: EquipmentInput): [Equipment]!
   }
@@ -132,6 +135,16 @@ const typeDefs = gql`
     UNCALIBRATED
   }
 
+  enum StatusAvailability {
+    AVAILABLE
+    UNAVAILABLE
+  }
+
+  enum StatusCalibration {
+    CALIBRATED
+    UNCALIBRATED
+  }
+
   type Equipment {
     id: ID!
     qr: String!
@@ -139,10 +152,12 @@ const typeDefs = gql`
     mfg: String!
     mfgPn: String!
     mfgSn: String!
+    status: StatusAvailability!
+    calStatus: StatusCalibration!
     #principals: [Equipment]!
     #acessories: [Equipment]!
-    log: [Log]!
-    schedule: [Reservation]!
+    log(from: String = null, to: String = null): [Log]!
+    schedule(from: String = null, to: String = null): [Reservation]!
     calibrations: [Calibration]!
     receipts: [Receipt]!
     comments: [Comment]!
@@ -177,14 +192,12 @@ const typeDefs = gql`
   }
 
   """
-  Reservations refer to records of scheduled equipment usage (holds)
+  Reservations refer to records of scheduled equipment usage (holds) - NOT CURRENTLY IMPLEMENTED
   """
   type Reservation {
     id: ID!
     equipment: Equipment!
-    user: ID!
-    userName: String!
-    userEmail: String!
+    user: User!
     start: String!
     end: String!
     created: String!
