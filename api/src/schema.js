@@ -6,24 +6,24 @@ const typeDefs = gql`
 
   type Query {
     """
+    Retrieves an array of equipment (executed on browse)
+    """
+    equipment(): [Equipment]!
+    """
     Retrieves a single equipment record from a given equipment ID (executed on /:id/)
     """
     equipmentById(input: EquipmentIdInput): Equipment!
 
     """
-    Retrieves a single user record from a given user's ID
+    Retrieves all equipment checked out to a given user (executed on /user/)
     """
-    user(input: UserIdInput): User!
+    userItems(input: UserInput): [Equipment]
 
     """
     Retrieves an equipment record from a given equipment QR code ID (executed on scan)
     """
     equipmentByQR(input: QRInput): Equipment!
 
-    """
-    Retrieves an array of equipment using optional filters (executed on browse)
-    """
-    equipment(input: EquipmentInput): [Equipment]!
   }
 
   type Mutation @authenticated {
@@ -46,7 +46,7 @@ const typeDefs = gql`
     checkIn(input: CheckInInput): Log!
 
     """
-    Upload an image via URL
+    Upload an image to imgur via URL
     """
     uploadImage(input: UploadImageInput): Image!
     """
@@ -123,21 +123,10 @@ const typeDefs = gql`
     qr: Int
   }
 
-  enum FilterAvailability {
-    ALL
-    AVAILABLE
-    UNAVAILABLE
-  }
-
-  enum FilterCalibration {
-    ALL
-    CALIBRATED
-    UNCALIBRATED
-  }
-
   enum StatusAvailability {
     AVAILABLE
     UNAVAILABLE
+    RESERVED
   }
 
   enum StatusCalibration {
