@@ -49,7 +49,7 @@ const typeDefs = gql`
     """
     uploadImage(input: UploadImageInput): Image!
     """
-    Change an equipment record's associated image to another existing image
+    Change an existing equipment record's associated image to another existing image
     """
     changeImage(input: ChangeImageInput): Equipment!
   }
