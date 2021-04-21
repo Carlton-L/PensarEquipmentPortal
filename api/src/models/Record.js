@@ -22,6 +22,10 @@ const RecordSchema = mongoose.Schema({
     }),
     required: true,
   },
+  project: {
+    type: String,
+    required: true,
+  },
   start: {
     type: Date,
     required: function () {
