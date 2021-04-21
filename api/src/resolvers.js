@@ -1,4 +1,5 @@
 const { getDescription } = require("graphql");
+const Equipment = require("./models/Equipment");
 
 module.exports = {
   Query: {
@@ -24,6 +25,14 @@ module.exports = {
           url: data.link,
         };
       });
+    },
+    changeImage(_, { input: { equipment, image } }) {
+      Equipment.findById(equipment)
+        .exec()
+        .then((item) => {
+          item.image = image;
+          item.save();
+        });
     },
   },
   Equipment: {
