@@ -16,7 +16,7 @@ class ImgurAPI extends RESTDataSource {
   }
 
   async uploadImageFromUrl(url) {
-    const formData = `image=${url}&type=url`;
+    const formData = `image=${url}&album=${process.env.IMGUR_ALBUM_DELETE_HASH}&type=url`;
     return this.post("upload", formData);
   }
 }
