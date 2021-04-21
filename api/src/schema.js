@@ -13,16 +13,19 @@ const typeDefs = gql`
     Retrieves a single equipment record from a given equipment ID (executed on /:id/)
     """
     equipmentById(input: EquipmentIdInput): Equipment!
-
-    """
-    Retrieves all equipment checked out to a given user (executed on /user/)
-    """
-    userItems(input: UserInput): [Equipment]
-
     """
     Retrieves an equipment record from a given equipment QR code ID (executed on scan)
     """
     equipmentByQR(input: QRInput): Equipment!
+
+    """
+    Retrieves all logs for a given user (executed on /user/)
+    """
+    userItemLog(input: UserInput): [Log]
+    """
+    Retrieves all reservations for a given user (executed on /user/)
+    """
+    userItemSchedule(input: UserInput): [Reservation]
   }
 
   type Mutation @authenticated {
@@ -97,13 +100,13 @@ const typeDefs = gql`
 
   input EditEquipmentInput {
     id: ID!
+    user: UserInput!
     qr: String
     description: String
     mfg: String
     mfgPn: String
     mfgSn: String
     isActive: Boolean
-    modifiedBy: ID!
   }
 
   input UserIdInput {
