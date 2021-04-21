@@ -15,10 +15,19 @@ module.exports = {
     },
   },
   Mutation: {
-    uploadImage(_, { url }, context) {},
+    uploadImage(_, { input: { url } }, { dataSources: { imgurAPI } }) {
+      return imgurAPI.uploadImageFromUrl(url).then(({ data }) => {
+        return {
+          id: data.id,
+          deleteHash: data.deletehash,
+          type: data.type,
+          url: data.link,
+        };
+      });
+    },
   },
   Equipment: {
-    status({ id }) {
+    status({ id }, __, { models: { Record } }) {
       // Look for current log (checkOut date but no checkIn date)
       // const log = Record.findOne({ _id: id, checkIn: null, checkOut: { $exists: true }})
       const log = true;
@@ -43,7 +52,6 @@ module.exports = {
   },
   Calibration: {
     file: (_, __, context) => {
-      console.log(context);
       return "filename";
     },
   },

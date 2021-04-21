@@ -5,8 +5,9 @@ const connectDB = require("../config/db");
 const typeDefs = require("./schema");
 const resolvers = require("./resolvers");
 const { AuthenticationDirective } = require("./directives");
-const Equipment = require("../src/models/Equipment");
-const Record = require("../src/models/Record");
+const Equipment = require("./models/Equipment");
+const Record = require("./models/Record");
+const ImgurAPI = require("./datasources/imgur");
 
 const authRouter = require("./routes/auth");
 
@@ -24,6 +25,11 @@ app.use("/auth", authRouter);
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  dataSources: () => {
+    return {
+      imgurAPI: new ImgurAPI(),
+    };
+  },
   context: ({ req }) => {
     const token =
       process.env.NODE_ENV === "development"
