@@ -1,6 +1,4 @@
 const { nanoid } = require("nanoid");
-const Equipment = require("./models/Equipment");
-const Record = require("./models/Record");
 
 module.exports = {
   Query: {
@@ -17,7 +15,11 @@ module.exports = {
     },
   },
   Mutation: {
-    addEquipment(_, { input: { user, description, mfg, mfgPn, mfgSn } }) {
+    addEquipment(
+      _,
+      { input: { user, description, mfg, mfgPn, mfgSn } },
+      { models: { Equipment } }
+    ) {
       // user is a user object
       // mfg, mfgPn, mfgSn, and description are Strings
       return Equipment.create({
@@ -46,7 +48,7 @@ module.exports = {
         };
       });
     },
-    changeImage(_, { input: { equipment, image } }) {
+    changeImage(_, { input: { equipment, image } }, { models: { Equipment } }) {
       // FIX: Make sure this mutation returns the correct object type
       // equipment is an ObjectId
       // image is an image object
@@ -57,7 +59,11 @@ module.exports = {
           return item.save();
         });
     },
-    checkOut(_, { input: { user, equipment, project } }) {
+    checkOut(
+      _,
+      { input: { user, equipment, project } },
+      { models: { Record } }
+    ) {
       // user is a user object
       // equipment is an ObjectId
       // project is a String
@@ -71,7 +77,7 @@ module.exports = {
         createdBy: user,
       });
     },
-    checkIn(_, { input: { user, equipment } }) {
+    checkIn(_, { input: { user, equipment } }, { models: { Record } }) {
       // TODO: Add logic to look for current reservation for user and delete
       // user is a user object
       // equipment is an ObjectId
@@ -112,16 +118,38 @@ module.exports = {
 
       return "AVAILABLE";
     },
+    calStatus({ id }, __, { models: Equipment }) {
+      // TODO: Compute cal status
+    },
+    log() {
+      // TODO: Fetch logs
+    },
+    schedule() {
+      // TODO: Fetch schedule
+    },
+  },
+  User: {
+    // TODO: Resolve at least logs and reservations fields
+  },
+  Log: {
+    // TODO: Resolve at least equipment field
+  },
+  Reservation: {
+    // TODO: Rsolve at least equipment field
+  },
+  Comment: {
+    // TODO: Resolve at least equipment field
+  },
+  Receipt: {
+    // TODO: Resolve at least equipment field and file field
+  },
+  Calibration: {
+    // TODO: Resolve at least equipment field and file field
   },
   File: {
     __resolveType(file) {
       if (file.calibrated) return "Calibration";
       return "Receipt";
-    },
-  },
-  Calibration: {
-    file: (_, __, context) => {
-      return "filename";
     },
   },
 };
