@@ -2,17 +2,21 @@ const { nanoid } = require("nanoid");
 
 module.exports = {
   Query: {
-    equipmentById(_, { _id }, { models: { Equipment } }) {
-      return Equipment.findOne({ _id: _id }).then((equipment) => {
-        return {
-          ...equipment,
-          status,
-          calStatus,
-          log,
-          schedule,
-        };
-      });
+    equipment(_, __, { models: { Equipment } }) {
+      return Equipment.find({}).exec();
     },
+    equipmentById(_, { inout: { equipment } }, { models: { Equipment } }) {
+      return Equipment.findById(equipment).exec()
+    },
+    equipmentByQR(_, { input: { qr } }, { models: { Equipment }}) {
+      return Equipment.findOne({ qr: qr }).exec()
+    },
+    userItemLog() {
+      // TODO: UserItemLog
+    },
+    userItemSchedule() {
+      /TODO: UserItemSchedule
+    }
   },
   Mutation: {
     addEquipment(
@@ -36,6 +40,13 @@ module.exports = {
         created: Date.now(),
         createdBy: user,
       });
+    },
+    editEquipment(
+      _,
+      { input: { id, user, qr, description, mfg, mfgPn, mfgSn, isActive } },
+      { models: { Equipment } }
+    ) {
+      // TODO: Update document
     },
     uploadImage(_, { input: { url } }, { dataSources: { imgurAPI } }) {
       // url is a string
