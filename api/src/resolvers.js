@@ -60,7 +60,6 @@ module.exports = {
       });
     },
     changeImage(_, { input: { equipment, image } }, { models: { Equipment } }) {
-      // FIX: Make sure this mutation returns the correct object type
       // equipment is an ObjectId
       // image is an image object
       Equipment.findById(equipment)
