@@ -32,29 +32,29 @@ const typeDefs = gql`
     """
     Add a new equipment record to the database
     """
-    addEquipment(input: AddEquipmentInput): Equipment!
+    addEquipment(input: AddEquipmentInput!): Equipment!
     """
     Edit an existing equipment record
     """
-    editEquipment(input: EditEquipmentInput): Equipment!
+    editEquipment(input: EditEquipmentInput!): Equipment!
 
     """
     Check out an item to a user and project code
     """
-    checkOut(input: CheckOutInput): Log!
+    checkOut(input: CheckOutInput!): Log!
     """
     Check in an item back to the lab
     """
-    checkIn(input: CheckInInput): Log!
+    checkIn(input: CheckInInput!): Log!
 
     """
     Upload an image to imgur via URL
     """
-    uploadImage(input: UploadImageInput): Image!
+    uploadImage(input: UploadImageInput!): Image!
     """
     Change an existing equipment record's associated image to another existing image
     """
-    changeImage(input: ChangeImageInput): Equipment!
+    changeImage(input: ChangeImageInput!): Equipment!
   }
 
   input UserInput {
