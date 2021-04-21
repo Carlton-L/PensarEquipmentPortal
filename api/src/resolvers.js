@@ -6,17 +6,17 @@ module.exports = {
       return Equipment.find({}).exec();
     },
     equipmentById(_, { inout: { equipment } }, { models: { Equipment } }) {
-      return Equipment.findById(equipment).exec()
+      return Equipment.findById(equipment).exec();
     },
-    equipmentByQR(_, { input: { qr } }, { models: { Equipment }}) {
-      return Equipment.findOne({ qr: qr }).exec()
+    equipmentByQR(_, { input: { qr } }, { models: { Equipment } }) {
+      return Equipment.findOne({ qr: qr }).exec();
     },
     userItemLog() {
-      // TODO: UserItemLog
+      // TODO: UserItemLog return an array of logs
     },
     userItemSchedule() {
-      /TODO: UserItemSchedule
-    }
+      //TODO: UserItemSchedule return an aray of reservations
+    },
   },
   Mutation: {
     addEquipment(
@@ -106,6 +106,9 @@ module.exports = {
     },
   },
   Equipment: {
+    id({ _id }) {
+      return _id;
+    },
     status({ id }, __, { models: { Record } }) {
       // Look for current log (checkOut date but no checkIn date)
       const log = Record.findOne({
