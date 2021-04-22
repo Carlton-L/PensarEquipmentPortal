@@ -35,7 +35,6 @@ router.get("/", (req, res) => {
   cca
     .getAuthCodeUrl(authCodeUrlParameters)
     .then((response) => {
-      console.log("\nAuth Code URL:", response, "\n");
       res.redirect(response);
     })
     .catch((error) => console.log(JSON.stringify(error)));
@@ -61,10 +60,6 @@ router.get("/redirect", (req, res) => {
       const { oid, name, preferred_username, aud } = decodedToken.payload;
       const idToken = response.idToken;
 
-      console.log(name, preferred_username, aud);
-
-      console.log(idToken);
-
       // Sets the HTTP Set-Cookie header to the idToken value
       res.cookie("authToken", idToken, { httpOnly: true });
 
@@ -77,6 +72,8 @@ router.get("/redirect", (req, res) => {
 
       // Responds with the user
       // res.status(200).send({ name, oid, preferred_username });
+
+      console.log(`Logged in ${name}`);
 
       // HACK: Auto-redirect to graphQL interface and set environment variable
       process.env.TEST_TOKEN = idToken;
