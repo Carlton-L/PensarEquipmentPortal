@@ -87,30 +87,53 @@ module.exports = {
       // user is a user object
       // equipment is an ObjectId
       // project is a String
-      return Record.create({
-        equipment: equipment,
-        user: user,
-        project: project,
-        checkOut: Date.now(),
-        checkIn: null,
-        created: Date.now(),
-        createdBy: user,
-      });
+
+      // Check to verify there is not an open log for this equipment
+      // TODO: Add logic to check for current reservation
+      return Record.countDocuments({ equipment: equipment, checkIn: null })
+        .exec()
+        .then((count) => {
+          if (count > 0) {
+            throw new Error(
+              `Cannot check out equipment id ${equipment}: Item is currently checked out`
+            );
+          }
+
+          return Record.create({
+            equipment: equipment,
+            user: user,
+            project: project,
+            checkOut: Date.now(),
+            checkIn: null,
+            created: Date.now(),
+            createdBy: user,
+          });
+        });
     },
     checkIn(_, { input: { user, equipment } }, { models: { Record } }) {
-      // TODO: Add logic to look for current reservation for user and delete
       // user is a user object
       // equipment is an ObjectId
-      return Record.find({
-        equipment: equipment,
-        checkIn: null,
-      })
+
+      // Check to verify that there is an open log for this equipment
+      // TODO: Add logic to look for current reservation for user and delete
+      return Record.countDocuments({ equipment: equipment, checkIn: null })
         .exec()
-        .then((item) => {
-          item.checkIn = Date.now();
-          item.modified = Date.now();
-          item.modifiedBy = user;
-          return item.save();
+        .then((count) => {
+          if (count === 0) {
+            throw new Error(
+              `Cannot check in equipment id ${equipment}: Item is not currently checked out`
+            );
+          }
+
+          return Record.findOne({
+            equipment: equipment,
+            checkIn: null,
+          }).then((item) => {
+            item.checkIn = Date.now();
+            item.modified = Date.now();
+            item.modifiedBy = user;
+            return item.save();
+          });
         });
     },
   },
