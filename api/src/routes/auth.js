@@ -76,7 +76,11 @@ router.get("/redirect", (req, res) => {
       );
 
       // Responds with the user
-      res.status(200).send({ name, oid, preferred_username });
+      // res.status(200).send({ name, oid, preferred_username });
+
+      // HACK: Auto-redirect to graphQL interface and set environment variable
+      process.env.TEST_TOKEN = idToken;
+      res.redirect("http://localhost:3000/graphql");
     })
     .catch((error) => {
       console.log(error);
