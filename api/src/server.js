@@ -11,9 +11,6 @@ const ImgurAPI = require("./datasources/imgur");
 
 const authRouter = require("./routes/auth");
 
-// Connect to MongoDB
-connectDB();
-
 // Create new express app
 const app = express();
 
@@ -63,6 +60,9 @@ const server = new ApolloServer({
 // Mount express middleware
 server.applyMiddleware({ app });
 
-app.listen({ port: process.env.PORT }, () => {
-  console.log(`🚀 Server ready at http://localhost:${process.env.PORT}`);
+// Connect to MongoDB, then start server
+connectDB().then(() => {
+  app.listen({ port: process.env.PORT }, () => {
+    console.log(`🚀 Server ready at http://localhost:${process.env.PORT}`);
+  });
 });
