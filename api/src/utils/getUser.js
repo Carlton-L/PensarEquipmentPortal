@@ -43,13 +43,9 @@ const getUser = async (token) => {
         },
         (error, decoded) => {
           if (error) {
-            console.log(
-              `User ${decodedToken.payload.name} failed to authenticate`
-            );
-            return Promise.reject(Error(error));
+            return Promise.reject(error);
           } else {
-            const { aud, name, oid, preferred_username } = decoded.payload;
-            console.log(`User ${name} authenticated successfully`);
+            const { aud, name, oid, preferred_username } = decoded;
             return { aud, name, oid, preferred_username };
           }
         }
