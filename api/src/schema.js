@@ -55,6 +55,15 @@ const typeDefs = gql`
     Change an existing equipment record's associated image to another existing image
     """
     changeImage(input: ChangeImageInput!): Equipment!
+
+    """
+    Adds a new calibration record to an equipment document
+    """
+    addCalibration(input: AddCalibrationInput): Calibration!
+    """
+    Adds a new receipt record to an equipment document
+    """
+    addReceipt(input: AddReceiptInput): Receipt!
   }
 
   input UserInput {
@@ -119,6 +128,14 @@ const typeDefs = gql`
 
   input QRInput {
     qr: Int
+  }
+
+  input AddCalibrationInput {
+    equipment: ID!
+  }
+
+  input AddReceiptInput {
+    equipment: ID!
   }
 
   enum StatusAvailability {
