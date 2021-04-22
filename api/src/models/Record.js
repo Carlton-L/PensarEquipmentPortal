@@ -53,46 +53,42 @@ const RecordSchema = mongoose.Schema({
     required: true,
   },
   createdBy: {
-    user: {
-      type: mongoose.Schema({
-        id: {
-          type: String,
-          required: true,
-        },
-        name: {
-          type: String,
-          required: true,
-        },
-        email: {
-          type: String,
-          required: true,
-        },
-      }),
-      required: true,
-    },
+    type: mongoose.Schema({
+      id: {
+        type: String,
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+    }),
+    required: true,
   },
   modified: {
     type: Date,
     required: false,
   },
   modifiedBy: {
-    user: {
-      type: mongoose.Schema({
-        id: {
-          type: String,
-          required: true,
-        },
-        name: {
-          type: String,
-          required: true,
-        },
-        email: {
-          type: String,
-          required: true,
-        },
-      }),
-      required: false,
-    },
+    type: mongoose.Schema({
+      id: {
+        type: String,
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+    }),
+    required: false,
   },
 });
 
