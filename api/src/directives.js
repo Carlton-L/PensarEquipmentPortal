@@ -1,6 +1,7 @@
 const {
   AuthenticationError,
   SchemaDirectiveVisitor,
+  forEachField,
 } = require("apollo-server-express");
 const { defaultFieldResolver } = require("graphql");
 const { getUser } = require("./utils/getUser");
@@ -28,21 +29,17 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
       field.resolve = async (...args) => {
         const context = args[2];
 
-        console.log(context);
-
-        // If the user is not authenticated yet, authenticate the user and set authenticated to true
-        if (!context.authenticated) {
-          console.log("Attempting to authenticate user...");
-          try {
-            // Get user from a given auth token
-            context.user = await getUser(context.authToken);
-          } catch (error) {
-            throw new AuthenticationError(
-              `Access Denied: Authentication Failed ${error}`
-            );
-          }
-          context.authenticated = true;
+        // Authenticate the user
+        console.log("Attempting to authenticate user...");
+        // Get user from a given auth token
+        try {
+          context.user = await getUser(context.authToken);
+        } catch (error) {
+          console.log("Authentication failed.");
+          throw new AuthenticationError(error);
         }
+
+        console.log(context.user);
 
         return resolve.apply(this, args);
       };
