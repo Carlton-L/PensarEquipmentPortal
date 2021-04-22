@@ -34,9 +34,11 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
         // Get user from a given auth token
         try {
           context.user = await getUser(context.authToken);
+          console.log(`User ${context.user.name} authenticated successfully`);
         } catch (error) {
-          console.log("Authentication failed.");
-          throw new AuthenticationError(error);
+          console.log(`Authentication failed: ${error.message}`);
+          // NOTE: Stack trace is removed from this error if NODE_ENV is set to "production" or "test"
+          throw new AuthenticationError(error.message);
         }
 
         console.log(context.user);
