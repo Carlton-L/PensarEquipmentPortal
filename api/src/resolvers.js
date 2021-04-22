@@ -38,7 +38,9 @@ module.exports = {
         image: null,
         isActive: true,
         created: Date.now(),
-        createdBy: { user },
+        // REVIEW: Does mongoDB require that nested objects have an _id that is unique across the entire collection?
+        // Each instance of a user will share an id value but be assigned a unique _id by mongoDB
+        createdBy: user,
       });
     },
     editEquipment(
