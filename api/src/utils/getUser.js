@@ -13,14 +13,13 @@ const getPublicKeys = () => {
 };
 
 // Validate token and get user information
-const getUser = (token) => {
+const getUser = async (token) => {
   // Attempt to decode the passed in token
   const decodedToken = jwt.decode(token, { complete: true });
   const { kid } = decodedToken.header;
-  const { aud, name, oid, preferred_username } = decodedToken.payload;
 
   // Fetch public keys
-  getPublicKeys()
+  return getPublicKeys()
     .then((response) => {
       // Format the public key as a certificate
       return `-----BEGIN CERTIFICATE-----\n${response.keys
@@ -35,12 +34,28 @@ const getUser = (token) => {
     })
     .then((publicKey) => {
       // Verify the passed in token against the public key certificate
-      jwt.verify(token, publicKey, {
-        algorithms: ["RS256", "HS256"],
-        audience: process.env.AZURE_CLIENT_ID,
-      });
+      return jwt.verify(
+        token,
+        publicKey,
+        {
+          algorithms: ["RS256", "HS256"],
+          audience: process.env.AZURE_CLIENT_ID,
+        },
+        (error, decoded) => {
+          if (error) {
+            console.log(
+              `User ${decodedToken.payload.name} failed to authenticate`
+            );
+            return Promise.reject(Error(error));
+          } else {
+            const { aud, name, oid, preferred_username } = decoded.payload;
+            console.log(`User ${name} authenticated successfully`);
+            return { aud, name, oid, preferred_username };
+          }
+        }
+      );
     });
-  return { aud, name, oid, preferred_username };
+  // return { aud, name, oid, preferred_username };
 };
 
 module.exports = {
