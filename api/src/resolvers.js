@@ -38,7 +38,7 @@ module.exports = {
         image: null,
         isActive: true,
         created: Date.now(),
-        createdBy: user,
+        createdBy: { user },
       });
     },
     editEquipment(
@@ -60,7 +60,7 @@ module.exports = {
         return {
           id: data.id,
           deleteHash: data.deletehash,
-          type: data.type,
+          fileType: data.type,
           url: data.link,
         };
       });
@@ -68,9 +68,11 @@ module.exports = {
     changeImage(_, { input: { equipment, image } }, { models: { Equipment } }) {
       // equipment is an ObjectId
       // image is an image object
-      Equipment.findById(equipment)
+      return Equipment.findById(equipment)
         .exec()
         .then((item) => {
+          image.fileType = image.type;
+          delete image.type;
           item.image = image;
           return item.save();
         });
@@ -155,6 +157,11 @@ module.exports = {
   },
   Reservation: {
     // TODO: Rsolve at least equipment field
+  },
+  Image: {
+    type({ fileType }) {
+      return fileType;
+    },
   },
   Comment: {
     // TODO: Resolve at least equipment field
