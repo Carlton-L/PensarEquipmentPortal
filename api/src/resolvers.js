@@ -48,6 +48,12 @@ module.exports = {
     ) {
       // TODO: Update document
     },
+    addReceipt(_, { input: { id, user, equipment, calibrated, file } }) {
+      // TODO: Add receipt
+    },
+    addCalibration() {
+      // TODO: Add calibration
+    },
     uploadImage(_, { input: { url } }, { dataSources: { imgurAPI } }) {
       // url is a string
       return imgurAPI.uploadImageFromUrl(url).then(({ data }) => {
