@@ -13,18 +13,19 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
   }
 
   visitFieldDefinition(field, details) {
-    this.ensureFieldsWrapped(details.objectType);
+    this.ensureFieldsWrapped(details.objectType, field.name);
   }
 
-  ensureFieldsWrapped(objectType) {
+  ensureFieldsWrapped(objectType, fieldName) {
+    // NOTE: The fieldName argument is optional, and only used when wrapping a single field
+
     // Mark the GraphQLObjectType object to avoid re-wrapping
     if (objectType._authFieldsWrapped) return;
+    // Check to see if the object (or parent object in the case of a field) has already been wrapped
     objectType._authFieldsWrapped = true;
 
-    const fields = objectType.getFields();
-
-    Object.keys(fields).forEach((fieldName) => {
-      const field = fields[fieldName];
+    // Declare auth function to be run on each field
+    const auth = (field) => {
       const { resolve = defaultFieldResolver } = field;
       field.resolve = async (...args) => {
         const context = args[2];
@@ -35,17 +36,31 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
         try {
           context.user = await getUser(context.authToken);
           console.log(`User ${context.user.name} authenticated successfully`);
+          context.authenticated = true;
         } catch (error) {
-          console.log(`Authentication failed: ${error.message}`);
+          console.log(
+            `Authentication failed: ${error.message}, try authenticating at http://localhost:3000/auth`
+          );
           // NOTE: Stack trace is removed from this error if NODE_ENV is set to "production" or "test"
           throw new AuthenticationError(error.message);
         }
-
-        console.log(context.user);
-
         return resolve.apply(this, args);
       };
-    });
+    };
+
+    // Get an array of all fields on an object
+    const fields = objectType.getFields();
+
+    // Check if we're looking at an object or a field
+    if (!fieldName) {
+      // If no fieldName was passed in, it's an object
+      // Iterate through each of the fields and apply the auth function to each
+      Object.keys(fields).forEach((field) => auth(fields[field]));
+    } else {
+      // Otherwise it's a field (whose parent object has not been iterated through before)
+      // Just run once on the single field that was passed in
+      auth(fields[fieldName]);
+    }
   }
 }
 
