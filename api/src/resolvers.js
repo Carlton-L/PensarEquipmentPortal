@@ -1,5 +1,10 @@
 const { nanoid } = require("nanoid");
 
+// [x] Handle Error: checkOut something already checked out
+// [x] Handle Error: checkIn something already checked in
+// [ ] Handle Error: Equipment not found (checkOut, checkIn, editEquipment, changeImage, equipmentById, equipmentByQR)
+// [ ] Handle Error: Bad file type (changeImage, uploadImage)
+
 module.exports = {
   Query: {
     equipment(_, __, { models: { Equipment } }) {
@@ -11,11 +16,8 @@ module.exports = {
     equipmentByQR(_, { input: { qr } }, { models: { Equipment } }) {
       return Equipment.findOne({ qr: qr }).exec();
     },
-    userItemLog() {
-      // TODO: UserItemLog return an array of logs
-    },
-    userItemSchedule() {
-      //TODO: UserItemSchedule return an aray of reservations
+    user() {
+      // TODO: Return user info
     },
   },
   Mutation: {
