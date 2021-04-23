@@ -23,9 +23,11 @@ module.exports = {
   URL: URLResolver,
   Query: {
     equipment(_, __, { models: { Equipment } }) {
+      // DONE: Equipment Query Resolver
       return Equipment.find({}).exec();
     },
     equipmentById(_, { input: { equipment } }, { models: { Equipment } }) {
+      // DONE: EquipmentById Query Resolver
       return Equipment.findById(equipment)
         .exec()
         .then((equipment) => {
@@ -39,6 +41,7 @@ module.exports = {
         });
     },
     equipmentByQR(_, { input: { qr } }, { models: { Equipment } }) {
+      // DONE: EquipmentByQR Query Resolver
       return Equipment.findOne({ qr: qr })
         .exec()
         .then((equipment) => {
@@ -52,7 +55,7 @@ module.exports = {
         });
     },
     user() {
-      // TODO: Return user info
+      // TODO: User Query Resolver
     },
   },
   Mutation: {
@@ -61,6 +64,7 @@ module.exports = {
       { input: { user, description, mfg, mfgPn, mfgSn } },
       { models: { Equipment } }
     ) {
+      // DONE: AddEquipment Mutation REsolver
       // user is a user object
       // mfg, mfgPn, mfgSn, and description are Strings
       return Equipment.create({
@@ -85,6 +89,15 @@ module.exports = {
       { input: { id, user, qr, description, mfg, mfgPn, mfgSn, isActive } },
       { models: { Equipment } }
     ) {
+      // DONE: EditEquipment Mutation Resolver
+      // id is an ObjectID
+      // user is a user object
+      // qr is a nanoID (string)
+      // description is a non-empty string
+      // mfg is a string
+      // mfgPn is a string
+      // mfgSn is a string
+      // isActive is a boolean
       return Equipment.countDocuments({ _id: id })
         .exec()
         .then((count) => {
@@ -106,13 +119,14 @@ module.exports = {
         });
     },
     addReceipt(_, { input: { id, user, equipment, calibrated, file } }) {
-      // TODO: Add receipt
+      // TODO: AddReceipt Mutation Resolver
     },
     addCalibration() {
-      // TODO: Add calibration
+      // TODO: AddCalibration Mutation Resolver
     },
     uploadImage(_, { input: { url } }, { dataSources: { imgurAPI } }) {
-      // url is a string
+      // DONE: UploadImage Mutation  Resolver
+      // url is a URL (string)
       return imgurAPI.uploadImageFromUrl(url).then(({ data }) => {
         return {
           id: data.id,
@@ -123,6 +137,7 @@ module.exports = {
       });
     },
     changeImage(_, { input: { equipment, image } }, { models: { Equipment } }) {
+      // DONE: ChangeImage Mutation Resolver
       // equipment is an ObjectId
       // image is an image object
       return Equipment.findById(equipment)
@@ -145,11 +160,11 @@ module.exports = {
       { input: { user, equipment, project } },
       { models: { Equipment, Record } }
     ) {
+      // TODO: CheckOut Mutation Resolver (Add logic to check for current reservation)
       // user is a user object
       // equipment is an ObjectId
-      // project is a String
+      // project is a non-empty string
 
-      // TODO: Add logic to check for current reservation
       // Check to verify there is not an open log for this equipment
       return Equipment.countDocuments({ _id: equipment })
         .exec()
@@ -189,10 +204,10 @@ module.exports = {
       { input: { user, equipment } },
       { models: { Equipment, Record } }
     ) {
+      // TODO: CheckIn Mutation Resolver (Add logic to look for current reservation for user and delete)
       // user is a user object
       // equipment is an ObjectId
 
-      // TODO: Add logic to look for current reservation for user and delete
       // Check to see if this equipment exists
       return Equipment.countDocuments({ _id: equipment })
         .exec()
@@ -231,9 +246,14 @@ module.exports = {
   },
   Equipment: {
     id({ _id }) {
+      // DONE: Equipment Id Resolver (alias _id)
+      // _id is an ObjectID
       return _id;
     },
     status({ id }, __, { models: { Record } }) {
+      // DONE: Equipment Status Resolver
+      // id is an ObjectID
+
       // Look for current log (checkOut date but no checkIn date)
       return Record.findOne({
         equipment: id,
@@ -242,7 +262,6 @@ module.exports = {
       })
         .exec()
         .then((log) => {
-          console.log(log);
           if (log) {
             return "UNAVAILABLE";
           } else {
@@ -264,37 +283,38 @@ module.exports = {
         });
     },
     calStatus({ id }, __, { models: Equipment }) {
-      // TODO: Compute cal status
+      // TODO: Equipment Cal Status Resolver
     },
     log() {
-      // TODO: Fetch logs
+      // TODO: Equipment Log Resolver
     },
     schedule() {
-      // TODO: Fetch schedule
+      // TODO: Equipment Schedule Resolver
     },
   },
   User: {
-    // TODO: Resolve at least logs and reservations fields
+    // TODO: User Resolver, at least logs and reservations fields
   },
   Log: {
-    // TODO: Resolve at least equipment field
+    // TODO: Log Resolver, at least equipment field
   },
   Reservation: {
-    // TODO: Rsolve at least equipment field
+    // TODO: Reservation Resolver, at least equipment field
   },
   Image: {
+    // DONE: Image Resolver, type field
     type({ fileType }) {
       return fileType;
     },
   },
   Comment: {
-    // TODO: Resolve at least equipment field
+    // TODO: Comment Resolver, at least equipment field
   },
   Receipt: {
-    // TODO: Resolve at least equipment field and file field
+    // TODO: Receipt Resolver, at least equipment field and file field
   },
   Calibration: {
-    // TODO: Resolve at least equipment field and file field
+    // TODO: Calibration Resolver, at least equipment field and file field
   },
   File: {
     __resolveType(file) {
