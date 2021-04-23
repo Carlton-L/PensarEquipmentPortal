@@ -1,4 +1,4 @@
-const ApolloError = require("apollo-server-errors");
+const { ApolloError } = require("apollo-server-errors");
 
 class OperationError extends ApolloError {
   constructor(message) {
