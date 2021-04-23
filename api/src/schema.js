@@ -118,10 +118,6 @@ const typeDefs = gql`
     isActive: Boolean
   }
 
-  input UserIdInput {
-    user: ID!
-  }
-
   input EquipmentIdInput {
     equipment: ID!
   }
@@ -132,6 +128,7 @@ const typeDefs = gql`
 
   input AddCalibrationInput {
     equipment: ID!
+    calibrated: String!
   }
 
   input AddReceiptInput {
