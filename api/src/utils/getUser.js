@@ -15,7 +15,17 @@ const getPublicKeys = () => {
 // Validate token and get user information
 const getUser = async (token) => {
   // Attempt to decode the passed in token
-  const decodedToken = jwt.decode(token, { complete: true });
+  const decodedToken = jwt.decode(
+    token,
+    { complete: true },
+    (error, decoded) => {
+      if (error) {
+        return Promise.reject(error);
+      } else {
+        return decoded;
+      }
+    }
+  );
   const { kid } = decodedToken.header;
 
   // Fetch public keys
