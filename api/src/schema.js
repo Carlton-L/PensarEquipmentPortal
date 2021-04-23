@@ -1,6 +1,14 @@
 const { gql } = require("apollo-server-express");
 const manufacturerList = require("./etc/manufacturers");
 
+# [ ] Add ObjectID Scalar
+# [ ] Add URL Scalar
+# [ ] Add DateTime or TimeStamp Scalar
+# [ ] Add EmailAddress Scalar
+# [ ] Add NonEmptyString Scalar
+# [ ] Implement addCalibration
+# [ ] Implement addReceipt
+
 const typeDefs = gql`
   directive @authenticated on OBJECT | FIELD_DEFINITION
 
