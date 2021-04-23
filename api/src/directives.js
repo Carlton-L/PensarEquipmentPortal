@@ -21,6 +21,7 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
 
     // Mark the GraphQLObjectType object to avoid re-wrapping
     if (objectType._authFieldsWrapped) return;
+
     // Check to see if the object (or parent object in the case of a field) has already been wrapped
     objectType._authFieldsWrapped = true;
 
@@ -32,6 +33,7 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
 
         // Authenticate the user
         console.log("Attempting to authenticate user...");
+
         // Get user from a given auth token
         try {
           context.user = await getUser(context.authToken);
@@ -41,6 +43,7 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
           console.log(
             `Authentication failed: ${error.message}, try authenticating at http://localhost:3000/auth`
           );
+
           // NOTE: Stack trace is removed from this error if NODE_ENV is set to "production" or "test"
           throw new AuthenticationError(error.message);
         }
@@ -54,10 +57,12 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
     // Check if we're looking at an object or a field
     if (!fieldName) {
       // If no fieldName was passed in, it's an object
+
       // Iterate through each of the fields and apply the auth function to each
       Object.keys(fields).forEach((field) => auth(fields[field]));
     } else {
       // Otherwise it's a field (whose parent object has not been iterated through before)
+
       // Just run once on the single field that was passed in
       auth(fields[fieldName]);
     }
