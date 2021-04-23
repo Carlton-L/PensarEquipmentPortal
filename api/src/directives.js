@@ -1,7 +1,6 @@
 const {
   AuthenticationError,
   SchemaDirectiveVisitor,
-  forEachField,
 } = require("apollo-server-express");
 const { defaultFieldResolver } = require("graphql");
 const { getUser } = require("./utils/getUser");
