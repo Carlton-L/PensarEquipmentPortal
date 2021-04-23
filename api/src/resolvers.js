@@ -8,10 +8,12 @@ const {
   URLResolver,
 } = require("graphql-scalars");
 
-// [x] Handle Error: checkOut something already checked out
-// [x] Handle Error: checkIn something already checked in
-// [ ] Handle Error: Equipment not found (checkOut, checkIn, editEquipment, changeImage, equipmentById, equipmentByQR)
-// [ ] Handle Error: Bad file type (changeImage, uploadImage)
+const { OperationError, DocumentNonExistentError } = require("./utils/errors");
+
+// [x] Handle Error: checkOut something already checked out - OperationError
+// [x] Handle Error: checkIn something already checked in - OperationError
+// [x] Handle Error: Equipment not found (checkOut, checkIn, editEquipment, changeImage, equipmentById, equipmentByQR) - DocumentNotExistent Error
+// [ ] Handle Error: Bad file type (changeImage, uploadImage) - FileTypeError
 
 module.exports = {
   EmailAddress: EmailAddressResolver,
@@ -23,11 +25,31 @@ module.exports = {
     equipment(_, __, { models: { Equipment } }) {
       return Equipment.find({}).exec();
     },
-    equipmentById(_, { inout: { equipment } }, { models: { Equipment } }) {
-      return Equipment.findById(equipment).exec();
+    equipmentById(_, { input: { equipment } }, { models: { Equipment } }) {
+      return Equipment.findById(equipment)
+        .exec()
+        .then((equipment) => {
+          if (!equipment) {
+            throw new DocumentNonExistentError(
+              "Requested ID does not match any documents in the database"
+            );
+          } else {
+            return equipment;
+          }
+        });
     },
     equipmentByQR(_, { input: { qr } }, { models: { Equipment } }) {
-      return Equipment.findOne({ qr: qr }).exec();
+      return Equipment.findOne({ qr: qr })
+        .exec()
+        .then((equipment) => {
+          if (!equipment) {
+            throw new DocumentNonExistentError(
+              "Requested QR code does not match any documents in the database"
+            );
+          } else {
+            return equipment;
+          }
+        });
     },
     user() {
       // TODO: Return user info
@@ -63,6 +85,25 @@ module.exports = {
       { input: { id, user, qr, description, mfg, mfgPn, mfgSn, isActive } },
       { models: { Equipment } }
     ) {
+      return Equipment.countDocuments({ _id: id })
+        .exec()
+        .then((count) => {
+          if (count === 0) {
+            throw new DocumentNonExistentError(
+              "Requested ID does not match any documents in the database"
+            );
+          } else {
+            const equipmentFields = {};
+            if (user) equipmentFields.user = user;
+            if (qr) equipmentFields.qr = qr;
+            if (description) equipmentFields.description = description;
+            if (mfg) equipmentFields.mfg = mfg;
+            if (mfgPn) equipmentFields.mfgPn = mfgPn;
+            if (mfgSn) equipmentFields.mfgSn = mfgSn;
+            if (isActive) equipmentFields.isActive = isActive;
+            return Equipment.findByIdAndUpdate(id, equipmentFields);
+          }
+        });
       // TODO: Update document
     },
     addReceipt(_, { input: { id, user, equipment, calibrated, file } }) {
@@ -88,10 +129,16 @@ module.exports = {
       return Equipment.findById(equipment)
         .exec()
         .then((item) => {
-          image.fileType = image.type;
-          delete image.type;
-          item.image = image;
-          return item.save();
+          if (!item) {
+            throw new DocumentNonExistentError(
+              "Requested ID does not match any documents in the database"
+            );
+          } else {
+            image.fileType = image.type;
+            delete image.type;
+            item.image = image;
+            return item.save();
+          }
         });
     },
     checkOut(
@@ -103,52 +150,79 @@ module.exports = {
       // equipment is an ObjectId
       // project is a String
 
-      // Check to verify there is not an open log for this equipment
       // TODO: Add logic to check for current reservation
-      return Record.countDocuments({ equipment: equipment, checkIn: null })
+      // Check to verify there is not an open log for this equipment
+      return Equipment.countDocuments({ _id: equipment })
         .exec()
         .then((count) => {
-          if (count > 0) {
-            throw new Error(
-              `Cannot check out equipment id ${equipment}: Item is currently checked out`
+          if (count === 0) {
+            throw new DocumentNonExistentError(
+              "Requested ID does not match any documents in the database"
             );
+          } else {
+            return Record.countDocuments({
+              equipment: equipment,
+              checkIn: null,
+            })
+              .exec()
+              .then((count) => {
+                if (count > 0) {
+                  throw new OperationError(
+                    `Cannot check out equipment id ${equipment}: Item is currently checked out`
+                  );
+                } else {
+                  return Record.create({
+                    equipment: equipment,
+                    user: user,
+                    project: project,
+                    checkOut: +dayjs,
+                    checkIn: null,
+                    created: +dayjs,
+                    createdBy: user,
+                  });
+                }
+              });
           }
-
-          return Record.create({
-            equipment: equipment,
-            user: user,
-            project: project,
-            checkOut: +dayjs,
-            checkIn: null,
-            created: +dayjs,
-            createdBy: user,
-          });
         });
     },
     checkIn(_, { input: { user, equipment } }, { models: { Record } }) {
       // user is a user object
       // equipment is an ObjectId
 
-      // Check to verify that there is an open log for this equipment
       // TODO: Add logic to look for current reservation for user and delete
-      return Record.countDocuments({ equipment: equipment, checkIn: null })
+      // Check to see if this equipment exists
+      return Equipment.countDocuments({ _id: equipment })
         .exec()
         .then((count) => {
           if (count === 0) {
-            throw new Error(
-              `Cannot check in equipment id ${equipment}: Item is not currently checked out`
+            throw new DocumentNonExistentError(
+              "Requested ID does not match any documents in the database"
             );
+          } else {
+            // Check to verify that there is an open log for this equipment
+            return Record.countDocuments({
+              equipment: equipment,
+              checkIn: null,
+            })
+              .exec()
+              .then((count) => {
+                if (count === 0) {
+                  throw new OperationError(
+                    `Cannot check in equipment id ${equipment}: Item is not currently checked out`
+                  );
+                } else {
+                  return Record.findOne({
+                    equipment: equipment,
+                    checkIn: null,
+                  }).then((item) => {
+                    item.checkIn = +dayjs;
+                    item.modified = +dayjs;
+                    item.modifiedBy = user;
+                    return item.save();
+                  });
+                }
+              });
           }
-
-          return Record.findOne({
-            equipment: equipment,
-            checkIn: null,
-          }).then((item) => {
-            item.checkIn = +dayjs;
-            item.modified = +dayjs;
-            item.modifiedBy = user;
-            return item.save();
-          });
         });
     },
   },
