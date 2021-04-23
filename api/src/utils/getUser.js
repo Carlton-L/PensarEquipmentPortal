@@ -39,6 +39,7 @@ const getUser = async (token) => {
           }
         })
         .filter(
+          // REVIEW: Should undefined be used here, or should it be null or ""?
           (element) => element !== undefined
         )}\n-----END CERTIFICATE-----`;
     })
