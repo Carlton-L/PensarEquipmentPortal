@@ -181,6 +181,7 @@ const typeDefs = gql`
     id: ObjectID!
     equipment: Equipment!
     user: User!
+    project: NonEmptyString!
     checkOut: Timestamp!
     checkIn: Timestamp
     created: Timestamp!
@@ -196,6 +197,7 @@ const typeDefs = gql`
     id: ObjectID!
     equipment: Equipment!
     user: User!
+    project: NonEmptyString!
     start: Timestamp!
     end: Timestamp!
     created: Timestamp!
