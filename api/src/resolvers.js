@@ -74,7 +74,7 @@ module.exports = {
         comments: [],
         image: null,
         isActive: true,
-        created: +dayjs,
+        created: +dayjs(),
         // REVIEW: Does mongoDB require that nested objects have an _id that is unique across the entire collection?
         // Each instance of a user will share an id value but be assigned a unique _id by mongoDB
         createdBy: user,
@@ -104,7 +104,6 @@ module.exports = {
             return Equipment.findByIdAndUpdate(id, equipmentFields);
           }
         });
-      // TODO: Update document
     },
     addReceipt(_, { input: { id, user, equipment, calibrated, file } }) {
       // TODO: Add receipt
@@ -144,7 +143,7 @@ module.exports = {
     checkOut(
       _,
       { input: { user, equipment, project } },
-      { models: { Record } }
+      { models: { Equipment, Record } }
     ) {
       // user is a user object
       // equipment is an ObjectId
@@ -175,9 +174,9 @@ module.exports = {
                     equipment: equipment,
                     user: user,
                     project: project,
-                    checkOut: +dayjs,
+                    checkOut: +dayjs(),
                     checkIn: null,
-                    created: +dayjs,
+                    created: +dayjs(),
                     createdBy: user,
                   });
                 }
@@ -185,7 +184,11 @@ module.exports = {
           }
         });
     },
-    checkIn(_, { input: { user, equipment } }, { models: { Record } }) {
+    checkIn(
+      _,
+      { input: { user, equipment } },
+      { models: { Equipment, Record } }
+    ) {
       // user is a user object
       // equipment is an ObjectId
 
@@ -215,8 +218,8 @@ module.exports = {
                     equipment: equipment,
                     checkIn: null,
                   }).then((item) => {
-                    item.checkIn = +dayjs;
-                    item.modified = +dayjs;
+                    item.checkIn = +dayjs();
+                    item.modified = +dayjs();
                     item.modifiedBy = user;
                     return item.save();
                   });
@@ -232,26 +235,33 @@ module.exports = {
     },
     status({ id }, __, { models: { Record } }) {
       // Look for current log (checkOut date but no checkIn date)
-      const log = Record.findOne({
-        _id: id,
+      return Record.findOne({
+        equipment: id,
         checkIn: null,
         checkOut: { $exists: true },
-      });
-      if (log) {
-        return "UNAVAILABLE";
-      }
+      })
+        .exec()
+        .then((log) => {
+          console.log(log);
+          if (log) {
+            return "UNAVAILABLE";
+          } else {
+            return Record.findOne({
+              _id: id,
+              start: { $lte: +dayjs() },
+              end: { $gte: +dayjs() },
+            })
+              .exec()
+              .then((reservation) => {
+                if (reservation) {
+                  return "RESERVED";
+                }
+                return "AVAILABLE";
+              });
+          }
 
-      // Look for current reservation
-      const reservation = Record.findOne({
-        _id: id,
-        start: { $lte: +dayjs },
-        end: { $gte: +dayjs },
-      });
-      if (reservation) {
-        return "RESERVED";
-      }
-
-      return "AVAILABLE";
+          // Look for current reservation
+        });
     },
     calStatus({ id }, __, { models: Equipment }) {
       // TODO: Compute cal status
