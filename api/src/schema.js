@@ -1,14 +1,6 @@
 const { gql } = require("apollo-server-express");
 const manufacturerList = require("./etc/manufacturers");
 
-# [ ] Add ObjectID Scalar
-# [ ] Add URL Scalar
-# [ ] Add DateTime or TimeStamp Scalar
-# [ ] Add EmailAddress Scalar
-# [ ] Add NonEmptyString Scalar
-# [ ] Implement addCalibration
-# [ ] Implement addReceipt
-
 const typeDefs = gql`
   directive @authenticated on OBJECT | FIELD_DEFINITION
 
@@ -72,71 +64,71 @@ const typeDefs = gql`
 
   input UserInput {
     id: ID!
-    name: String!
-    email: String!
+    name: NonEmptyString!
+    email: EmailAddress!
   }
 
   input CheckOutInput {
     user: UserInput!
-    equipment: ID!
-    project: String!
+    equipment: ObjectID!
+    project: NonEmptyString!
   }
 
   input CheckInInput {
     user: UserInput!
-    equipment: ID!
+    equipment: ObjectID!
   }
 
   input UploadImageInput {
-    url: String!
+    url: URL!
   }
 
   input ChangeImageInput {
-    equipment: ID!
+    equipment: ObjectID!
     image: ImageInput!
   }
 
   input ImageInput {
     id: ID!
     deleteHash: ID!
-    type: String!
-    url: String!
+    type: NonEmptyString!
+    url: URL!
   }
 
   input AddEquipmentInput {
     user: UserInput!
-    description: String!
-    mfg: String!
+    description: NonEmptyString!
+    mfg: NonEmptyString!
     mfgPn: String!
     mfgSn: String!
   }
 
   input EditEquipmentInput {
-    id: ID!
+    id: ObjectID!
     user: UserInput!
-    qr: String
-    description: String
-    mfg: String
+    qr: NonEmptyString
+    description: NonEmptyString
+    mfg: NonEmptyString
     mfgPn: String
     mfgSn: String
     isActive: Boolean
   }
 
   input EquipmentIdInput {
-    equipment: ID!
+    equipment: ObjectID!
   }
 
   input QRInput {
-    qr: Int
+    qr: NonEmptyString!
   }
 
   input AddCalibrationInput {
-    equipment: ID!
-    calibrated: String!
+    equipment: ObjectID!
+    calibrated: Timestamp!
   }
 
   input AddReceiptInput {
-    equipment: ID!
+    equipment: ObjectID!
   }
 
   enum StatusAvailability {
@@ -151,48 +143,49 @@ const typeDefs = gql`
   }
 
   type Equipment {
-    id: ID!
-    qr: String!
-    description: String!
-    mfg: String!
+    id: ObjectID!
+    qr: NonEmptyString!
+    description: NonEmptyString!
+    mfg: NonEmptyString!
     mfgPn: String!
     mfgSn: String!
     status: StatusAvailability!
     calStatus: StatusCalibration!
     #principals: [Equipment]!
     #acessories: [Equipment]!
-    log(from: String = null, to: String = null): [Log]!
-    schedule(from: String = null, to: String = null): [Reservation]!
+    # TODO: Implement date range
+    log(from: Timestamp = null, to: Timestamp = null): [Log]!
+    schedule(from: Timestamp = null, to: Timestamp = null): [Reservation]!
     calibrations: [Calibration]!
     receipts: [Receipt]!
     comments: [Comment]!
     image: Image
     isActive: Boolean!
-    created: String!
+    created: Timestamp!
     createdBy: User!
-    modified: String
+    modified: Timestamp
     modifiedBy: User
   }
 
   type Image {
     id: ID!
     deleteHash: ID!
-    type: String!
-    url: String!
+    type: NonEmptyString!
+    url: URL!
   }
 
   """
   Logs refer to records of actual equipment usage (check-out/check-in)
   """
   type Log {
-    id: ID!
+    id: ObjectID!
     equipment: Equipment!
     user: User!
-    checkOut: String!
-    checkIn: String
-    created: String!
+    checkOut: Timestamp!
+    checkIn: Timestamp
+    created: Timestamp!
     createdBy: User!
-    modified: String
+    modified: Timestamp
     modifiedBy: User
   }
 
@@ -200,24 +193,25 @@ const typeDefs = gql`
   Reservations refer to records of scheduled equipment usage (holds) - NOT CURRENTLY IMPLEMENTED
   """
   type Reservation {
-    id: ID!
+    id: ObjectID!
     equipment: Equipment!
     user: User!
-    start: String!
-    end: String!
-    created: String!
+    start: Timestamp!
+    end: Timestamp!
+    created: Timestamp!
     createdBy: User!
-    modified: String
+    modified: Timestamp
     modifiedBy: User
   }
 
+  # TODO: Determine GraphQL type for file fields
   interface File {
     id: ID!
     equipment: Equipment!
     file: String!
-    created: String!
+    created: Timestamp!
     createdBy: User!
-    modified: String
+    modified: Timestamp
     modifiedBy: User
   }
 
@@ -225,10 +219,10 @@ const typeDefs = gql`
     id: ID!
     equipment: Equipment!
     file: String! @authenticated
-    calibrated: String!
-    created: String!
+    calibrated: Timestamp!
+    created: Timestamp!
     createdBy: User!
-    modified: String
+    modified: Timestamp
     modifiedBy: User
   }
 
@@ -236,10 +230,9 @@ const typeDefs = gql`
     id: ID!
     equipment: Equipment!
     file: String! @authenticated
-    purchased: String
-    created: String!
+    created: Timestamp!
     createdBy: User!
-    modified: String
+    modified: Timestamp
     modifiedBy: User
   }
 
@@ -247,10 +240,10 @@ const typeDefs = gql`
     id: ID!
     user: User!
     equipment: Equipment!
-    content: String
-    created: String!
+    content: NonEmptyString
+    created: Timestamp!
     createdBy: User!
-    modified: String
+    modified: Timestamp
     modifiedBy: User
   }
 
@@ -259,8 +252,8 @@ const typeDefs = gql`
   """
   type User {
     id: ID!
-    name: String!
-    email: String!
+    name: NonEmptyString!
+    email: EmailAddress!
     logs: [Log]!
     reservations: [Reservation]!
   }

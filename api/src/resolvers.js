@@ -1,4 +1,12 @@
 const { nanoid } = require("nanoid");
+const dayjs = require("dayjs");
+const {
+  EmailAddressResolver,
+  NonEmptyStringResolver,
+  ObjectIDResolver,
+  TimestampResolver,
+  URLResolver,
+} = require("graphql-scalars");
 
 // [x] Handle Error: checkOut something already checked out
 // [x] Handle Error: checkIn something already checked in
@@ -6,6 +14,11 @@ const { nanoid } = require("nanoid");
 // [ ] Handle Error: Bad file type (changeImage, uploadImage)
 
 module.exports = {
+  EmailAddress: EmailAddressResolver,
+  NonEmptyString: NonEmptyStringResolver,
+  ObjectID: ObjectIDResolver,
+  Timestamp: TimestampResolver,
+  URL: URLResolver,
   Query: {
     equipment(_, __, { models: { Equipment } }) {
       return Equipment.find({}).exec();
@@ -39,7 +52,7 @@ module.exports = {
         comments: [],
         image: null,
         isActive: true,
-        created: Date.now(),
+        created: +dayjs,
         // REVIEW: Does mongoDB require that nested objects have an _id that is unique across the entire collection?
         // Each instance of a user will share an id value but be assigned a unique _id by mongoDB
         createdBy: user,
@@ -105,9 +118,9 @@ module.exports = {
             equipment: equipment,
             user: user,
             project: project,
-            checkOut: Date.now(),
+            checkOut: +dayjs,
             checkIn: null,
-            created: Date.now(),
+            created: +dayjs,
             createdBy: user,
           });
         });
@@ -131,8 +144,8 @@ module.exports = {
             equipment: equipment,
             checkIn: null,
           }).then((item) => {
-            item.checkIn = Date.now();
-            item.modified = Date.now();
+            item.checkIn = +dayjs;
+            item.modified = +dayjs;
             item.modifiedBy = user;
             return item.save();
           });
@@ -157,8 +170,8 @@ module.exports = {
       // Look for current reservation
       const reservation = Record.findOne({
         _id: id,
-        start: { $lte: Date.now() },
-        end: { $gte: Date.now() },
+        start: { $lte: +dayjs },
+        end: { $gte: +dayjs },
       });
       if (reservation) {
         return "RESERVED";

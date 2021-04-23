@@ -1,6 +1,13 @@
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const connectDB = require("../config/db");
+const {
+  EmailAddressTypeDefinition,
+  NonEmptyStringTypeDefinition,
+  ObjectIDTypeDefinition,
+  TimestampTypeDefinition,
+  URLTypeDefinition,
+} = require("graphql-scalars");
 
 const typeDefs = require("./schema");
 const resolvers = require("./resolvers");
@@ -20,7 +27,14 @@ app.use("/auth", authRouter);
 
 // Create new apollo server instance
 const server = new ApolloServer({
-  typeDefs,
+  typeDefs: [
+    typeDefs,
+    EmailAddressTypeDefinition,
+    NonEmptyStringTypeDefinition,
+    ObjectIDTypeDefinition,
+    TimestampTypeDefinition,
+    URLTypeDefinition,
+  ],
   resolvers,
   dataSources: () => {
     return {
