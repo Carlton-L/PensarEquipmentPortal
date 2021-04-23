@@ -7,6 +7,7 @@ const RecordSchema = mongoose.Schema({
   },
   user: {
     type: mongoose.Schema({
+      _id: false,
       id: {
         type: String,
         required: true,
@@ -54,6 +55,7 @@ const RecordSchema = mongoose.Schema({
   },
   createdBy: {
     type: mongoose.Schema({
+      _id: false,
       id: {
         type: String,
         required: true,
@@ -75,6 +77,7 @@ const RecordSchema = mongoose.Schema({
   },
   modifiedBy: {
     type: mongoose.Schema({
+      _id: false,
       id: {
         type: String,
         required: true,

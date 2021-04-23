@@ -24,6 +24,7 @@ const EquipmentSchema = mongoose.Schema({
   calibrations: [
     {
       type: mongoose.Schema({
+        _id: false,
         id: {
           type: String,
           required: true,
@@ -42,6 +43,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         createdBy: {
           type: mongoose.Schema({
+            _id: false,
             id: {
               type: String,
               required: true,
@@ -63,6 +65,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         modifiedBy: {
           type: mongoose.Schema({
+            _id: false,
             id: {
               type: String,
               required: true,
@@ -85,6 +88,7 @@ const EquipmentSchema = mongoose.Schema({
   receipts: [
     {
       type: mongoose.Schema({
+        _id: false,
         id: {
           type: String,
           required: true,
@@ -99,6 +103,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         createdBy: {
           type: mongoose.Schema({
+            _id: false,
             id: {
               type: String,
               required: true,
@@ -120,6 +125,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         modifiedBy: {
           type: mongoose.Schema({
+            _id: false,
             id: {
               type: String,
               required: true,
@@ -142,6 +148,7 @@ const EquipmentSchema = mongoose.Schema({
   comments: [
     {
       type: mongoose.Schema({
+        _id: false,
         id: {
           type: String,
           required: true,
@@ -156,6 +163,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         createdBy: {
           type: mongoose.Schema({
+            _id: false,
             id: {
               type: String,
               required: true,
@@ -177,6 +185,7 @@ const EquipmentSchema = mongoose.Schema({
         },
         modifiedBy: {
           type: mongoose.Schema({
+            _id: false,
             id: {
               type: String,
               required: true,
@@ -198,6 +207,7 @@ const EquipmentSchema = mongoose.Schema({
   ],
   image: {
     type: mongoose.Schema({
+      _id: false,
       id: {
         type: String,
         required: true,
@@ -227,6 +237,7 @@ const EquipmentSchema = mongoose.Schema({
   },
   createdBy: {
     type: mongoose.Schema({
+      _id: false,
       id: {
         type: String,
         required: true,
@@ -248,6 +259,7 @@ const EquipmentSchema = mongoose.Schema({
   },
   modifiedBy: {
     type: mongoose.Schema({
+      _id: false,
       id: {
         type: String,
         required: true,
