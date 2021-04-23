@@ -19,13 +19,9 @@ const typeDefs = gql`
     equipmentByQR(input: QRInput): Equipment!
 
     """
-    Retrieves all logs for a given user (executed on /user/)
+    Retrieves user information
     """
-    userItemLog(input: UserInput): [Log]
-    """
-    Retrieves all reservations for a given user (executed on /user/)
-    """
-    userItemSchedule(input: UserInput): [Reservation]
+    user(input: UserInput): User!
   }
 
   type Mutation @authenticated {
