@@ -56,7 +56,6 @@ const server = new ApolloServer({
         : req.headers.cookies.pensarUser;
     return {
       user: user,
-      authenticated: false,
       authToken: token,
       models: {
         Equipment,
