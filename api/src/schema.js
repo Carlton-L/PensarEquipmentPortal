@@ -21,7 +21,7 @@ const typeDefs = gql`
     """
     Retrieves user information
     """
-    user(input: UserInput): User!
+    user: User! @authenticated
   }
 
   type Mutation @authenticated {
