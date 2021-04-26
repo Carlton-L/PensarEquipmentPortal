@@ -55,11 +55,13 @@ module.exports = {
         });
     },
     user(_, __, { user }) {
+      console.log(user);
       return user;
       // TODO: User Query Resolver
     },
   },
   Mutation: {
+    // REVIEW: User argument can be removed, user can be taken from the context
     addEquipment(
       _,
       { input: { user, description, mfg, mfgPn, mfgSn } },
@@ -108,7 +110,6 @@ module.exports = {
             );
           } else {
             const equipmentFields = {};
-            if (user) equipmentFields.user = user;
             if (qr) equipmentFields.qr = qr;
             if (description) equipmentFields.description = description;
             if (mfg) equipmentFields.mfg = mfg;

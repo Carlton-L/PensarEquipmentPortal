@@ -56,13 +56,12 @@ const getUser = async (token) => {
           if (error) {
             return Promise.reject(error);
           } else {
-            const { aud, name, oid, preferred_username } = decoded;
-            return { aud, name, oid, preferred_username };
+            const { name, oid, preferred_username } = decoded;
+            return { name, id: oid, email: preferred_username };
           }
         }
       );
     });
-  // return { aud, name, oid, preferred_username };
 };
 
 module.exports = {

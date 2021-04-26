@@ -63,20 +63,12 @@ const typeDefs = gql`
     addReceipt(input: AddReceiptInput): Receipt!
   }
 
-  input UserInput {
-    id: ID!
-    name: NonEmptyString!
-    email: EmailAddress!
-  }
-
   input CheckOutInput {
-    user: UserInput!
     equipment: ObjectID!
     project: NonEmptyString!
   }
 
   input CheckInInput {
-    user: UserInput!
     equipment: ObjectID!
   }
 
@@ -97,7 +89,6 @@ const typeDefs = gql`
   }
 
   input AddEquipmentInput {
-    user: UserInput!
     description: NonEmptyString!
     mfg: NonEmptyString!
     mfgPn: String!
@@ -106,7 +97,6 @@ const typeDefs = gql`
 
   input EditEquipmentInput {
     id: ObjectID!
-    user: UserInput!
     qr: NonEmptyString
     description: NonEmptyString
     mfg: NonEmptyString

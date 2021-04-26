@@ -46,14 +46,8 @@ const server = new ApolloServer({
       process.env.NODE_ENV === "development"
         ? process.env.TEST_TOKEN
         : req.headers.cookies.authToken;
-    const user =
-      process.env.NODE_ENV === "development"
-        ? {
-            oid: "12345",
-            name: "carltonl@pensardevelopment.com",
-            preferred_username: "carltonl",
-          }
-        : req.headers.cookies.pensarUser;
+    // NOTE: User can be empty object because any authenticated request will set the user object in the context (getUser)
+    const user = {};
     return {
       user: user,
       authToken: token,
