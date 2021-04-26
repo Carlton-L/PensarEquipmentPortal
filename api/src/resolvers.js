@@ -54,7 +54,8 @@ module.exports = {
           }
         });
     },
-    user() {
+    user(_, __, { user }) {
+      return user;
       // TODO: User Query Resolver
     },
   },
@@ -282,7 +283,7 @@ module.exports = {
           // Look for current reservation
         });
     },
-    calStatus({ id }, __, { models: Equipment }) {
+    calStatus({ id }, __, { models: { Equipment } }) {
       // TODO: Equipment Cal Status Resolver
     },
     log() {
@@ -294,6 +295,18 @@ module.exports = {
   },
   User: {
     // TODO: User Resolver, at least logs and reservations fields
+    logs({ id }, __, { models: { Record } }) {
+      return Record.find({
+        checkOut: { $exists: true },
+        "user.id": id,
+      });
+    },
+    reservations({ id }, __, { models: { Record } }) {
+      return Record.find({
+        start: { $exists: true },
+        "user.id": id,
+      });
+    },
   },
   Log: {
     // TODO: Log Resolver, at least equipment field
