@@ -7,6 +7,7 @@ const config = {
   auth: {
     clientId: process.env.AZURE_CLIENT_ID,
     authority: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}`,
+    knownAuthorities: ["http://login.microsoftonline.com"],
     clientSecret: process.env.AZURE_CLIENT_SECRET,
   },
   system: {
