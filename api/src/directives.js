@@ -37,7 +37,6 @@ class AuthenticationDirective extends SchemaDirectiveVisitor {
         try {
           context.user = await getUser(context.authToken);
           console.log(`User ${context.user.name} authenticated successfully`);
-          context.authenticated = true;
         } catch (error) {
           console.log(
             `Authentication failed: ${error.message}, try authenticating at http://localhost:3000/auth`
