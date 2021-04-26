@@ -66,7 +66,7 @@ router.get("/redirect", (req, res) => {
       // Sets the HTTP Set-Cookie header to the user decoded from the idToken
       res.cookie(
         "pensarUser",
-        { name, oid, preferred_username },
+        { name: name, id: oid, email: preferred_username },
         { httpOnly: true }
       );
 
@@ -85,5 +85,7 @@ router.get("/redirect", (req, res) => {
       res.status(500).send(error);
     });
 });
+
+// TODO: Create route for logout (clear the user's cookies/session data)
 
 module.exports = router;
