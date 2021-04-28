@@ -55,17 +55,16 @@ module.exports = {
         });
     },
     user(_, __, { user }) {
-      console.log(user);
+      // DONE: User Query Resolver
       return user;
-      // TODO: User Query Resolver
     },
   },
   Mutation: {
     // REVIEW: User argument can be removed, user can be taken from the context
     addEquipment(
       _,
-      { input: { user, description, mfg, mfgPn, mfgSn } },
-      { models: { Equipment } }
+      { input: { description, mfg, mfgPn, mfgSn } },
+      { user, models: { Equipment } }
     ) {
       // DONE: AddEquipment Mutation REsolver
       // user is a user object
@@ -89,8 +88,8 @@ module.exports = {
     },
     editEquipment(
       _,
-      { input: { id, user, qr, description, mfg, mfgPn, mfgSn, isActive } },
-      { models: { Equipment } }
+      { input: { id, qr, description, mfg, mfgPn, mfgSn, isActive } },
+      { user, models: { Equipment } }
     ) {
       // DONE: EditEquipment Mutation Resolver
       // id is an ObjectID
@@ -120,7 +119,7 @@ module.exports = {
           }
         });
     },
-    addReceipt(_, { input: { id, user, equipment, calibrated, file } }) {
+    addReceipt(_, { input: { id, equipment, calibrated, file } }, { user }) {
       // TODO: AddReceipt Mutation Resolver
     },
     addCalibration() {
@@ -138,7 +137,11 @@ module.exports = {
         };
       });
     },
-    changeImage(_, { input: { equipment, image } }, { models: { Equipment } }) {
+    changeImage(
+      _,
+      { input: { equipment, image } },
+      { user, models: { Equipment } }
+    ) {
       // DONE: ChangeImage Mutation Resolver
       // equipment is an ObjectId
       // image is an image object
@@ -153,14 +156,16 @@ module.exports = {
             image.fileType = image.type;
             delete image.type;
             item.image = image;
+            item.modifiedBy = user;
+            item.modified = +dayjs();
             return item.save();
           }
         });
     },
     checkOut(
       _,
-      { input: { user, equipment, project } },
-      { models: { Equipment, Record } }
+      { input: { equipment, project } },
+      { user, models: { Equipment, Record } }
     ) {
       // TODO: CheckOut Mutation Resolver (Add logic to check for current reservation)
       // user is a user object
@@ -203,8 +208,8 @@ module.exports = {
     },
     checkIn(
       _,
-      { input: { user, equipment } },
-      { models: { Equipment, Record } }
+      { input: { equipment } },
+      { user, models: { Equipment, Record } }
     ) {
       // TODO: CheckIn Mutation Resolver (Add logic to look for current reservation for user and delete)
       // user is a user object
@@ -295,7 +300,7 @@ module.exports = {
     },
   },
   User: {
-    // TODO: User Resolver, at least logs and reservations fields
+    // DONE: User Resolver, at least logs and reservations fields
     logs({ id }, __, { models: { Record } }) {
       return Record.find({
         checkOut: { $exists: true },
