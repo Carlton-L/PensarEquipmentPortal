@@ -1,144 +1,243 @@
-const { gql } = require("apollo-server");
+const { gql } = require("apollo-server-express");
 const manufacturerList = require("./etc/manufacturers");
 
 const typeDefs = gql`
+  directive @authenticated on OBJECT | FIELD_DEFINITION
+
   type Query {
     """
-    Retrieves a single equipment record from a given equipment ID
+    Retrieves an array of equipment (executed on browse)
     """
-    equipment(input: EquipmentIdInput): Equipment!
+    equipment: [Equipment]!
     """
-    Retrieves a single user record from a given user's ID
+    Retrieves a single equipment record from a given equipment ID (executed on /:id/)
     """
-    user(input: UserIdInput): User!
+    equipmentById(input: EquipmentIdInput): Equipment!
     """
-    Retrieves an equipment record from a given equipment QR code integer
+    Retrieves an equipment record from a given equipment QR code ID (executed on scan)
     """
     equipmentByQR(input: QRInput): Equipment!
-  }
 
-  type Mutation {
     """
-    Adds a new user (usually run after OAuth for a user that doesn't already exist)
+    Retrieves user information
     """
-    addUser(input: AddUserInput): User!
+    user: User! @authenticated
   }
 
-  input UserIdInput {
-    id: ID!
+  type Mutation @authenticated {
+    """
+    Add a new equipment record to the database
+    """
+    addEquipment(input: AddEquipmentInput!): Equipment!
+    """
+    Edit an existing equipment record
+    """
+    editEquipment(input: EditEquipmentInput!): Equipment!
+
+    """
+    Check out an item to a user and project code
+    """
+    checkOut(input: CheckOutInput!): Log!
+    """
+    Check in an item back to the lab
+    """
+    checkIn(input: CheckInInput!): Log!
+    # TODO: Add Reservation Resolver
+
+    """
+    Upload an image to imgur via URL
+    """
+    uploadImage(input: UploadImageInput!): Image!
+    """
+    Change an existing equipment record's associated image to another existing image
+    """
+    changeImage(input: ChangeImageInput!): Equipment!
+
+    """
+    Adds a new calibration record to an equipment document
+    """
+    addCalibration(input: AddCalibrationInput): Calibration!
+    """
+    Adds a new receipt record to an equipment document
+    """
+    addReceipt(input: AddReceiptInput): Receipt!
   }
 
-  input AddUserInput {
+  input CheckOutInput {
+    equipment: ObjectID!
+    project: NonEmptyString!
+  }
+
+  input CheckInInput {
+    equipment: ObjectID!
+  }
+
+  input UploadImageInput {
+    url: URL!
+  }
+
+  input ChangeImageInput {
+    equipment: ObjectID!
+    image: ImageInput!
+  }
+
+  input ImageInput {
     id: ID!
-    name: String!
-    email: String!
+    deleteHash: ID!
+    type: NonEmptyString!
+    url: URL!
+  }
+
+  input AddEquipmentInput {
+    description: NonEmptyString!
+    mfg: NonEmptyString!
+    mfgPn: String!
+    mfgSn: String!
+  }
+
+  input EditEquipmentInput {
+    id: ObjectID!
+    qr: NonEmptyString
+    description: NonEmptyString
+    mfg: NonEmptyString
+    mfgPn: String
+    mfgSn: String
+    isActive: Boolean
   }
 
   input EquipmentIdInput {
-    id: ID!
+    equipment: ObjectID!
   }
 
   input QRInput {
-    qr: Int
+    qr: NonEmptyString!
+  }
+
+  input AddCalibrationInput {
+    equipment: ObjectID!
+    calibrated: Timestamp!
+  }
+
+  input AddReceiptInput {
+    equipment: ObjectID!
+  }
+
+  enum StatusAvailability {
+    AVAILABLE
+    UNAVAILABLE
+    RESERVED
+  }
+
+  enum StatusCalibration {
+    CALIBRATED
+    UNCALIBRATED
   }
 
   type Equipment {
-    id: ID!
-    qr: Int!
-    description: String!
-    mfgPn: String
-    mfgSn: String
-    principals: [Equipment]!
-    acessories: [Equipment]!
-    log: [Log]!
-    schedule: [Reservation]!
+    id: ObjectID!
+    qr: NonEmptyString!
+    description: NonEmptyString!
+    mfg: NonEmptyString!
+    mfgPn: String!
+    mfgSn: String!
+    status: StatusAvailability!
+    calStatus: StatusCalibration!
+    #principals: [Equipment]!
+    #acessories: [Equipment]!
+    # TODO: Implement date range
+    log(from: Timestamp = null, to: Timestamp = null): [Log]!
+    schedule(from: Timestamp = null, to: Timestamp = null): [Reservation]!
     calibrations: [Calibration]!
     receipts: [Receipt]!
     comments: [Comment]!
-    image: String
+    image: Image
     isActive: Boolean!
-    created: String!
-    createdBy: ID!
-    modified: String
-    modifiedBy: ID
+    created: Timestamp!
+    createdBy: User!
+    modified: Timestamp
+    modifiedBy: User
+  }
+
+  type Image {
+    id: ID!
+    deleteHash: ID!
+    type: NonEmptyString!
+    url: URL!
   }
 
   """
   Logs refer to records of actual equipment usage (check-out/check-in)
   """
   type Log {
-    id: ID!
+    id: ObjectID!
     equipment: Equipment!
-    user: ID!
-    userName: String!
-    userEmail: String!
-    checkOut: String!
-    checkIn: String
-    created: String!
-    createdBy: ID!
-    modified: String
-    modifiedBy: ID
+    user: User!
+    project: NonEmptyString!
+    checkOut: Timestamp!
+    checkIn: Timestamp
+    created: Timestamp!
+    createdBy: User!
+    modified: Timestamp
+    modifiedBy: User
   }
 
   """
-  Reservations refer to records of scheduled equipment usage (holds)
+  Reservations refer to records of scheduled equipment usage (holds) - NOT CURRENTLY IMPLEMENTED
   """
   type Reservation {
-    id: ID!
+    id: ObjectID!
     equipment: Equipment!
-    user: ID!
-    userName: String!
-    userEmail: String!
-    start: String!
-    end: String!
-    created: String!
-    createdBy: ID!
-    modified: String
-    modifiedBy: ID
+    user: User!
+    project: NonEmptyString!
+    start: Timestamp!
+    end: Timestamp!
+    created: Timestamp!
+    createdBy: User!
+    modified: Timestamp
+    modifiedBy: User
   }
 
+  # TODO: Determine GraphQL type for file fields
   interface File {
     id: ID!
     equipment: Equipment!
     file: String!
-    created: String!
-    createdBy: ID!
-    modified: String
-    modifiedBy: ID
+    created: Timestamp!
+    createdBy: User!
+    modified: Timestamp
+    modifiedBy: User
   }
 
   type Calibration implements File {
     id: ID!
     equipment: Equipment!
-    file: String!
-    calibrated: String!
-    created: String!
-    createdBy: ID!
-    modified: String
-    modifiedBy: ID
+    file: String! @authenticated
+    calibrated: Timestamp!
+    created: Timestamp!
+    createdBy: User!
+    modified: Timestamp
+    modifiedBy: User
   }
 
   type Receipt implements File {
     id: ID!
     equipment: Equipment!
-    file: String!
-    purchased: String
-    created: String!
-    createdBy: ID!
-    modified: String
-    modifiedBy: ID
+    file: String! @authenticated
+    created: Timestamp!
+    createdBy: User!
+    modified: Timestamp
+    modifiedBy: User
   }
 
   type Comment {
     id: ID!
-    user: ID!
-    userName: String!
-    userEmail: String!
+    user: User!
     equipment: Equipment!
-    created: String!
-    createdBy: ID!
-    modified: String
-    modifiedBy: ID
+    content: NonEmptyString
+    created: Timestamp!
+    createdBy: User!
+    modified: Timestamp
+    modifiedBy: User
   }
 
   """
@@ -146,8 +245,8 @@ const typeDefs = gql`
   """
   type User {
     id: ID!
-    name: String!
-    email: String!
+    name: NonEmptyString!
+    email: EmailAddress!
     logs: [Log]!
     reservations: [Reservation]!
   }
