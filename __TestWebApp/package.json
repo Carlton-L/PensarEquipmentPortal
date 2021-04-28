@@ -11,8 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "@azure/msal-node": "^1.0.1",
-    "apollo-server-express": "^2.22.2",
-    "express": "^4.17.1",
-    "node-fetch": "^2.6.1"
+    "express": "^4.17.1"
   }
 }
