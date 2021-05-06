@@ -24,6 +24,14 @@ class FileTypeError extends ApolloError {
   }
 }
 
+class ImgurError extends ApolloError {
+  constructor(message) {
+    super(message, "IMGUR_API_ERROR");
+
+    Object.defineProperty(this, "name", { value: "ImgurError" });
+  }
+}
+
 module.exports = {
   OperationError,
   DocumentNonExistentError,
