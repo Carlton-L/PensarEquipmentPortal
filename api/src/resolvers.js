@@ -8,12 +8,17 @@ const {
   URLResolver,
 } = require("graphql-scalars");
 
-const { OperationError, DocumentNonExistentError } = require("./utils/errors");
+const {
+  OperationError,
+  DocumentNonExistentError,
+  ImgurError,
+} = require("./utils/errors");
 
 // [x] Handle Error: checkOut something already checked out - OperationError
 // [x] Handle Error: checkIn something already checked in - OperationError
 // [x] Handle Error: Equipment not found (checkOut, checkIn, editEquipment, changeImage, equipmentById, equipmentByQR) - DocumentNotExistent Error
-// [ ] Handle Error: Bad file type (changeImage, uploadImage) - FileTypeError
+// [x] Handle Error: Error in Imgur Request (changeImage, uploadImage) - ImgurError
+// [ ] Handle Error: Bad file type (addCalibration, addReceipt) - FileTypeError
 
 module.exports = {
   EmailAddress: EmailAddressResolver,
@@ -60,7 +65,6 @@ module.exports = {
     },
   },
   Mutation: {
-    // REVIEW: User argument can be removed, user can be taken from the context
     addEquipment(
       _,
       { input: { description, mfg, mfgPn, mfgSn } },
@@ -128,14 +132,19 @@ module.exports = {
     uploadImage(_, { input: { url } }, { dataSources: { imgurAPI } }) {
       // DONE: UploadImage Mutation  Resolver
       // url is a URL (string)
-      return imgurAPI.uploadImageFromUrl(url).then(({ data }) => {
-        return {
-          id: data.id,
-          deleteHash: data.deletehash,
-          fileType: data.type,
-          url: data.link,
-        };
-      });
+      return imgurAPI
+        .uploadImageFromUrl(url)
+        .then(({ data }) => {
+          return {
+            id: data.id,
+            deleteHash: data.deletehash,
+            fileType: data.type,
+            url: data.link,
+          };
+        })
+        .catch((error) => {
+          throw new ImgurError("");
+        });
     },
     changeImage(
       _,
@@ -292,11 +301,13 @@ module.exports = {
     calStatus({ id }, __, { models: { Equipment } }) {
       // TODO: Equipment Cal Status Resolver
     },
-    log() {
-      // TODO: Equipment Log Resolver
+    log({ id }, __, { models: { Record } }) {
+      // DONE: Equipment Log Resolver
+      return Record.find({ checkOut: { $exists: true }, equipment: id });
     },
-    schedule() {
-      // TODO: Equipment Schedule Resolver
+    schedule({ id }, __, { models: { Record } }) {
+      // DONE: Equipment Schedule Resolver
+      return Record.find({ start: { $exists: true }, equipment: id });
     },
   },
   User: {
@@ -314,26 +325,17 @@ module.exports = {
       });
     },
   },
-  Log: {
-    // TODO: Log Resolver, at least equipment field
-  },
-  Reservation: {
-    // TODO: Reservation Resolver, at least equipment field
-  },
   Image: {
     // DONE: Image Resolver, type field
     type({ fileType }) {
       return fileType;
     },
   },
-  Comment: {
-    // TODO: Comment Resolver, at least equipment field
-  },
   Receipt: {
-    // TODO: Receipt Resolver, at least equipment field and file field
+    // TODO: Receipt Resolver, at least file field
   },
   Calibration: {
-    // TODO: Calibration Resolver, at least equipment field and file field
+    // TODO: Calibration Resolver, at least file field
   },
   File: {
     __resolveType(file) {
