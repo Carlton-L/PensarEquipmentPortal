@@ -169,7 +169,6 @@ const typeDefs = gql`
   Logs refer to records of actual equipment usage (check-out/check-in)
   """
   type Log {
-    id: ObjectID!
     equipment: Equipment!
     user: User!
     project: NonEmptyString!
@@ -185,7 +184,6 @@ const typeDefs = gql`
   Reservations refer to records of scheduled equipment usage (holds) - NOT CURRENTLY IMPLEMENTED
   """
   type Reservation {
-    id: ObjectID!
     equipment: Equipment!
     user: User!
     project: NonEmptyString!
