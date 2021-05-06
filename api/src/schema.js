@@ -42,7 +42,7 @@ const typeDefs = gql`
     Check in an item back to the lab
     """
     checkIn(input: CheckInInput!): Log!
-    # TODO: Add Reservation Resolver
+    # TODO: Add Reservation Mutation
 
     """
     Upload an image to imgur via URL
