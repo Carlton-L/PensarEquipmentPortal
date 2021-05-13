@@ -19,6 +19,7 @@ const {
 // [x] Handle Error: Equipment not found (checkOut, checkIn, editEquipment, changeImage, equipmentById, equipmentByQR) - DocumentNotExistent Error
 // [x] Handle Error: Error in Imgur Request (changeImage, uploadImage) - ImgurError
 // [ ] Handle Error: Bad file type (addCalibration, addReceipt) - FileTypeError
+// NOTE: Anywhere where a field in the schema contains a nested object (Type) but the mongoose model contains only an ObjectID, that field needs to have it's own resolver
 
 module.exports = {
   EmailAddress: EmailAddressResolver,
@@ -327,6 +328,21 @@ module.exports = {
     },
   },
   Log: {
+    equipment({ equipment }, __, { models: { Equipment } }) {
+      return Equipment.findById(equipment)
+        .exec()
+        .then((equipment) => {
+          if (!equipment) {
+            throw new DocumentNonExistentError(
+              "Requested ID does not match any documents in the database"
+            );
+          } else {
+            return equipment;
+          }
+        });
+    },
+  },
+  Reservation: {
     equipment({ equipment }, __, { models: { Equipment } }) {
       return Equipment.findById(equipment)
         .exec()
