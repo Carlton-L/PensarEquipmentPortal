@@ -1,9 +1,9 @@
-FROM node:16-stretch
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-COPY . /usr/src/app
-
-EXPOSE 8080
-RUN npm install
-
-CMD ["npm",  "run", "server"]
+# Build Stage
+FROM node:16-stretch AS build
+WORKDIR /build
+COPY package-lock.json package.json ./
+RUN npm ci
+COPY . .
+EXPOSE 80
+CMD ["node", "-r", "dotenv/config", "api/src/server.js"]
+#CMD ["npm",  "run", "server"]
