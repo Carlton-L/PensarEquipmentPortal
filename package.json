@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Carlton-L/PensarEquipmentPortal/issues"
   },
-  "homepage": "https://github.com/Carlton-L/PensarEquipmentPortal#readme"
+  "homepage": "https://github.com/Carlton-L/PensarEquipmentPortal#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
