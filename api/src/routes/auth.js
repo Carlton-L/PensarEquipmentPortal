@@ -78,8 +78,8 @@ router.get("/redirect", (req, res) => {
       console.log(`Logged in ${name}`);
 
       // HACK: Auto-redirect to graphQL interface and set environment variable
-      process.env.AZURE_TEST_TOKEN = idToken;
-      res.redirect("http://localhost:3000/graphql");
+      // process.env.AZURE_TEST_TOKEN = idToken;
+      // res.redirect("http://localhost:3000/graphql");
     })
     .catch((error) => {
       console.log(error);
