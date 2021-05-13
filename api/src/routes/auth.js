@@ -2,6 +2,7 @@ const express = require("express");
 const msal = require("@azure/msal-node");
 const jwt = require("jsonwebtoken");
 const fetch = require("node-fetch");
+const { Router } = require("express");
 
 const config = {
   auth: {
@@ -77,7 +78,7 @@ router.get("/redirect", (req, res) => {
       console.log(`Logged in ${name}`);
 
       // HACK: Auto-redirect to graphQL interface and set environment variable
-      process.env.TEST_TOKEN = idToken;
+      process.env.AZURE_TEST_TOKEN = idToken;
       res.redirect("http://localhost:3000/graphql");
     })
     .catch((error) => {
@@ -86,6 +87,8 @@ router.get("/redirect", (req, res) => {
       res.status(500).send(error);
     });
 });
+
+router.get("/logout", (req, res) => {});
 
 // TODO: Create route for logout (clear the user's cookies/session data)
 
