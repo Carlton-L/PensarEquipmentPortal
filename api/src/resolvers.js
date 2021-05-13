@@ -263,13 +263,14 @@ module.exports = {
   Equipment: {
     id({ _id }) {
       // DONE: Equipment Id Resolver (alias _id)
+      console.log(_id);
       // _id is an ObjectID
       return _id;
     },
     status({ id }, __, { models: { Record } }) {
       // DONE: Equipment Status Resolver
       // id is an ObjectID
-
+      console.log(id);
       // Look for current log (checkOut date but no checkIn date)
       return Record.findOne({
         equipment: id,
@@ -323,6 +324,21 @@ module.exports = {
         start: { $exists: true },
         "user.id": id,
       });
+    },
+  },
+  Log: {
+    equipment({ equipment }, __, { models: { Equipment } }) {
+      return Equipment.findById(equipment)
+        .exec()
+        .then((equipment) => {
+          if (!equipment) {
+            throw new DocumentNonExistentError(
+              "Requested ID does not match any documents in the database"
+            );
+          } else {
+            return equipment;
+          }
+        });
     },
   },
   Image: {
