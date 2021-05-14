@@ -1,6 +1,5 @@
 # Build Stage
-FROM node:16-stretch AS build
-WORKDIR /build
+FROM --platform=linux/amd64 node:16-stretch
 COPY package-lock.json package.json ./
 RUN npm ci
 COPY . .
