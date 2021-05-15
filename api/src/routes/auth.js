@@ -28,10 +28,11 @@ const cca = new msal.ConfidentialClientApplication(config);
 router = express.Router();
 
 // Auth Code Route - Retrieves an auth code url and redirects the user to login
+// HACK: redirectUri must be hard-coded (no template strings)
 router.get("/", (req, res) => {
   const authCodeUrlParameters = {
     scopes: ["user.read"],
-    redirectUri: "http://localhost:3000/auth/redirect",
+    redirectUri: "http://localhost:80/auth/redirect",
   };
 
   cca
@@ -43,11 +44,12 @@ router.get("/", (req, res) => {
 });
 
 // Token Route - Retrieves a JWT using a given auth code and redirects the user to their origin page
+// HACK: redirectUri must be hard-coded (no template strings)
 router.get("/redirect", (req, res) => {
   const tokenRequest = {
     code: req.query.code,
     scopes: ["user.read"],
-    redirectUri: "http://localhost:3000/auth/redirect",
+    redirectUri: "http://localhost:80/auth/redirect",
   };
 
   // console.log("Redirect Request:\n", req);
@@ -78,8 +80,8 @@ router.get("/redirect", (req, res) => {
       console.log(`Logged in ${name}`);
 
       // HACK: Auto-redirect to graphQL interface and set environment variable
-      // process.env.AZURE_TEST_TOKEN = idToken;
-      // res.redirect("http://localhost:3000/graphql");
+      process.env.AZURE_TEST_TOKEN = idToken;
+      res.redirect("http://localhost:80/graphql");
     })
     .catch((error) => {
       console.log(error);
