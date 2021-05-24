@@ -146,11 +146,15 @@ module.exports = {
     ) {
       // TODO: AddCalibration Mutation Resolver
 
+      // Generate unique blob name
       const blobName = nanoid();
 
+      // Instantiate new Container Client
       const containerClient = blobServiceClient.getContainerClient(
         process.env.AZURE_STORAGE_CONTAINER_NAME
       );
+
+      // Instantiate new Blob Client
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       // const credentials = new StorageSharedKeyCredential()
       const sasToken = generateBlobSASQueryParameters(
