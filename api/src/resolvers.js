@@ -177,7 +177,7 @@ module.exports = {
       { input: { equipment, project } },
       { user, models: { Equipment, Record } }
     ) {
-      // TODO: CheckOut Mutation Resolver (Add logic to check for current reservation)
+      // DONE: CheckOut Mutation Resolver (Add logic to check for current reservation)
       // user is a user object
       // equipment is an ObjectId
       // project is a non-empty string
@@ -191,6 +191,7 @@ module.exports = {
               "Requested ID does not match any documents in the database"
             );
           } else {
+            // Check for open checkout log
             return Record.countDocuments({
               equipment: equipment,
               checkIn: null,
@@ -202,15 +203,31 @@ module.exports = {
                     `Cannot check out equipment id ${equipment}: Item is currently checked out`
                   );
                 } else {
-                  return Record.create({
+                  // Check for current reservation
+                  return Record.countDocuments({
                     equipment: equipment,
-                    user: user,
-                    project: project,
-                    checkOut: +dayjs(),
-                    checkIn: null,
-                    created: +dayjs(),
-                    createdBy: user,
-                  });
+                    start: { $lte: +dayjs() },
+                    end: { $gte: +dayjs() },
+                  })
+                    .exec()
+                    .then((count) => {
+                      if (count > 0) {
+                        throw new OperationError(
+                          `Cannot check out equipment id ${equipment}: Item is currently reserved`
+                        );
+                      } else {
+                        // Create new log
+                        return Record.create({
+                          equipment: equipment,
+                          user: user,
+                          project: project,
+                          checkOut: +dayjs(),
+                          checkIn: null,
+                          created: +dayjs(),
+                          createdBy: user,
+                        });
+                      }
+                    });
                 }
               });
           }
