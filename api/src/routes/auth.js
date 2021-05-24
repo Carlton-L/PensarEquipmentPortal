@@ -1,8 +1,6 @@
 const express = require("express");
 const msal = require("@azure/msal-node");
 const jwt = require("jsonwebtoken");
-const fetch = require("node-fetch");
-const { Router } = require("express");
 
 const config = {
   auth: {
