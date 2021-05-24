@@ -182,7 +182,7 @@ module.exports = {
       // equipment is an ObjectId
       // project is a non-empty string
 
-      // Check to verify there is not an open log for this equipment
+      // Check to see if this equipment exists
       return Equipment.countDocuments({ _id: equipment })
         .exec()
         .then((count) => {
@@ -238,7 +238,7 @@ module.exports = {
       { input: { equipment } },
       { user, models: { Equipment, Record } }
     ) {
-      // TODO: CheckIn Mutation Resolver (Add logic to look for current reservation for user and delete)
+      // DONE: CheckIn Mutation Resolver (Add logic to look for current reservation for user and delete)
       // user is a user object
       // equipment is an ObjectId
 
@@ -263,15 +263,24 @@ module.exports = {
                     `Cannot check in equipment id ${equipment}: Item is not currently checked out`
                   );
                 } else {
-                  return Record.findOne({
+                  // Check for a reservation that is current and belongs to the current user and delete it
+                  return Record.findOneAndDelete({
                     equipment: equipment,
-                    checkIn: null,
-                  }).then((item) => {
-                    item.checkIn = +dayjs();
-                    item.modified = +dayjs();
-                    item.modifiedBy = user;
-                    return item.save();
-                  });
+                    start: { $lte: +dayjs() },
+                    end: { $gte: +dayjs() },
+                  })
+                    .exec()
+                    .then(() => {
+                      return Record.findOne({
+                        equipment: equipment,
+                        checkIn: null,
+                      }).then((item) => {
+                        item.checkIn = +dayjs();
+                        item.modified = +dayjs();
+                        item.modifiedBy = user;
+                        return item.save();
+                      });
+                    });
                 }
               });
           }
