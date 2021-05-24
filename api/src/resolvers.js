@@ -1,6 +1,12 @@
 const { nanoid } = require("nanoid");
 const dayjs = require("dayjs");
 const {
+  StorageSharedKeyCredential,
+  BlobServiceClient,
+  generateBlobSASQueryParameters,
+  BlobSASPermissions,
+} = require("@azure/storage-blob");
+const {
   EmailAddressResolver,
   NonEmptyStringResolver,
   ObjectIDResolver,
@@ -13,6 +19,15 @@ const {
   DocumentNonExistentError,
   ImgurError,
 } = require("./utils/errors");
+
+const sharedKeyCredential = new StorageSharedKeyCredential(
+  process.env.AZURE_STORAGE_ACCOUNT_NAME,
+  process.env.AZURE_STORAGE_ACCOUNT_KEY
+);
+const blobServiceClient = new BlobServiceClient(
+  `https://${process.env.AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net`,
+  sharedKeyCredential
+);
 
 // [x] Handle Error: checkOut something already checked out - OperationError
 // [x] Handle Error: checkIn something already checked in - OperationError
@@ -124,11 +139,37 @@ module.exports = {
           }
         });
     },
+    addCalibration(
+      _,
+      { input: { equipment, calibrated } },
+      { user, models: { Equipment } }
+    ) {
+      // TODO: AddCalibration Mutation Resolver
+
+      const blobName = nanoid();
+
+      const containerClient = blobServiceClient.getContainerClient(
+        process.env.AZURE_STORAGE_CONTAINER_NAME
+      );
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      // const credentials = new StorageSharedKeyCredential()
+      const sasToken = generateBlobSASQueryParameters(
+        {
+          containerName: containerName,
+          blobName: blobName,
+          expiresOn: new Date(new Date().valueOf() + 86400),
+          // Read, Add, Create, Write, Delete
+          permissions: BlobSASPermissions.parse("racwd"),
+        },
+        sharedKeyCredential
+      );
+
+      const sasUrl = `${blockBlobClient.url}?${sasToken}`;
+
+      console.log(sasUrl);
+    },
     addReceipt(_, { input: { id, equipment, calibrated, file } }, { user }) {
       // TODO: AddReceipt Mutation Resolver
-    },
-    addCalibration() {
-      // TODO: AddCalibration Mutation Resolver
     },
     uploadImage(_, { input: { url } }, { dataSources: { imgurAPI } }) {
       // DONE: UploadImage Mutation  Resolver
