@@ -30,7 +30,8 @@ router = express.Router();
 router.get("/", (req, res) => {
   const authCodeUrlParameters = {
     scopes: ["user.read"],
-    redirectUri: "http://localhost:80/auth/redirect",
+    redirectUri:
+      "https://equipment-portal-alpha.azurewebsites.net/auth/redirect",
   };
 
   cca
@@ -47,7 +48,8 @@ router.get("/redirect", (req, res) => {
   const tokenRequest = {
     code: req.query.code,
     scopes: ["user.read"],
-    redirectUri: "http://localhost:80/auth/redirect",
+    redirectUri:
+      "https://equipment-portal-alpha.azurewebsites.net/auth/redirect",
   };
 
   // console.log("Redirect Request:\n", req);
@@ -79,7 +81,7 @@ router.get("/redirect", (req, res) => {
 
       // HACK: Auto-redirect to graphQL interface and set environment variable
       process.env.AZURE_TEST_TOKEN = idToken;
-      res.redirect("http://localhost:80/graphql");
+      res.redirect("https://equipment-portal-alpha.azurewebsites.net/graphql");
     })
     .catch((error) => {
       console.log(error);
