@@ -36,4 +36,5 @@ module.exports = {
   OperationError,
   DocumentNonExistentError,
   FileTypeError,
+  ImgurError,
 };
