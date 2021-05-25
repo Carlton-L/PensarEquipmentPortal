@@ -125,20 +125,6 @@ module.exports = {
           }
         });
     },
-    addCalibration(
-      _,
-      { input: { equipment, calibrated } },
-      { user, models: { Equipment } }
-    ) {
-      // TODO: AddCalibration Mutation Resolver
-    },
-    addReceipt(
-      _,
-      { input: { id, equipment, calibrated, file } },
-      { user, models: { Equipment } }
-    ) {
-      // TODO: AddReceipt Mutation Resolver
-    },
     uploadImage(_, { input: { url } }, { dataSources: { imgurAPI } }) {
       // DONE: UploadImage Mutation  Resolver
       // url is a URL (string)
@@ -295,6 +281,20 @@ module.exports = {
           }
         });
     },
+    addCalibration(
+      _,
+      { input: { equipment, calibrated } },
+      { user, models: { Equipment } }
+    ) {
+      // TODO: AddCalibration Mutation Resolver
+    },
+    addReceipt(
+      _,
+      { input: { id, equipment, calibrated, file } },
+      { user, models: { Equipment } }
+    ) {
+      // TODO: AddReceipt Mutation Resolver
+    },
     addReservation(
       _,
       { input: { equipment, project, start, end } },
@@ -358,6 +358,7 @@ module.exports = {
     },
     calStatus({ id }, __, { models: { Equipment } }) {
       // TODO: Equipment Cal Status Resolver
+      return "UNCALIBRATED";
     },
     log({ id }, __, { models: { Record } }) {
       // DONE: Equipment Log Resolver
