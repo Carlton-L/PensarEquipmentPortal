@@ -5,4 +5,4 @@ RUN npm ci
 COPY . .
 EXPOSE 80
 CMD ["node", "-r", "dotenv/config", "api/src/server.js"]
-#CMD ["npm",  "run", "server"]
+#CMD ["npm",  "run", "production"]
