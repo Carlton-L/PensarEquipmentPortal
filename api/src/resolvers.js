@@ -1,11 +1,6 @@
 const { nanoid } = require("nanoid");
 const dayjs = require("dayjs");
-const {
-  StorageSharedKeyCredential,
-  BlobServiceClient,
-  generateBlobSASQueryParameters,
-  BlobSASPermissions,
-} = require("@azure/storage-blob");
+
 const {
   EmailAddressResolver,
   NonEmptyStringResolver,
@@ -19,15 +14,6 @@ const {
   DocumentNonExistentError,
   ImgurError,
 } = require("./utils/errors");
-
-const sharedKeyCredential = new StorageSharedKeyCredential(
-  process.env.AZURE_STORAGE_ACCOUNT_NAME,
-  process.env.AZURE_STORAGE_ACCOUNT_KEY
-);
-const blobServiceClient = new BlobServiceClient(
-  `https://${process.env.AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net`,
-  sharedKeyCredential
-);
 
 // [x] Handle Error: checkOut something already checked out - OperationError
 // [x] Handle Error: checkIn something already checked in - OperationError
@@ -145,34 +131,12 @@ module.exports = {
       { user, models: { Equipment } }
     ) {
       // TODO: AddCalibration Mutation Resolver
-
-      // Generate unique blob name
-      const blobName = nanoid();
-
-      // Instantiate new Container Client
-      const containerClient = blobServiceClient.getContainerClient(
-        process.env.AZURE_STORAGE_CONTAINER_NAME
-      );
-
-      // Instantiate new Blob Client
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      // const credentials = new StorageSharedKeyCredential()
-      const sasToken = generateBlobSASQueryParameters(
-        {
-          containerName: containerName,
-          blobName: blobName,
-          expiresOn: new Date(new Date().valueOf() + 86400),
-          // Read, Add, Create, Write, Delete
-          permissions: BlobSASPermissions.parse("racwd"),
-        },
-        sharedKeyCredential
-      );
-
-      const sasUrl = `${blockBlobClient.url}?${sasToken}`;
-
-      console.log(sasUrl);
     },
-    addReceipt(_, { input: { id, equipment, calibrated, file } }, { user }) {
+    addReceipt(
+      _,
+      { input: { id, equipment, calibrated, file } },
+      { user, models: { Equipment } }
+    ) {
       // TODO: AddReceipt Mutation Resolver
     },
     uploadImage(_, { input: { url } }, { dataSources: { imgurAPI } }) {
@@ -330,6 +294,27 @@ module.exports = {
               });
           }
         });
+    },
+    addReservation(
+      _,
+      { input: { equipment, project, start, end } },
+      { user, models: { Equipment, Record } }
+    ) {
+      // TODO: Add Reservation Resolver
+    },
+    deleteReservation(
+      _,
+      { input: { reservation } },
+      { user, models: { Record } }
+    ) {
+      // TODO: Delete Reservation Resolver
+    },
+    editReservation(
+      _,
+      { input: { reservation, project, start, end } },
+      { user, models: { Record } }
+    ) {
+      // TODO: Edit Reservation Resolver
     },
   },
   Equipment: {
