@@ -46,7 +46,7 @@ const server = new ApolloServer({
       process.env.NODE_ENV === "development"
         ? process.env.AZURE_TEST_TOKEN
         : req.headers.cookies.authToken;
-    // NOTE: User can be empty object because any authenticated request will set the user object in the context (getUser)
+    // NOTE: User can be empty object because any @authenticated request will set the user object in the context (getUser)
     const user = {};
     return {
       user: user,
