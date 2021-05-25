@@ -42,7 +42,6 @@ const typeDefs = gql`
     Check in an item back to the lab
     """
     checkIn(input: CheckInInput!): Log!
-    # TODO: Add Reservation Mutation
 
     """
     Create a new reservation
