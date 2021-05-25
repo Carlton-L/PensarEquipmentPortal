@@ -139,7 +139,8 @@ module.exports = {
           };
         })
         .catch((error) => {
-          throw new ImgurError("");
+          console.error(error);
+          throw new ImgurError(error);
         });
     },
     changeImage(
