@@ -358,6 +358,7 @@ module.exports = {
     },
     calStatus({ id }, __, { models: { Equipment } }) {
       // TODO: Equipment Cal Status Resolver
+      // HACK: Returns only UNCALIBRATED
       return "UNCALIBRATED";
     },
     log({ id }, __, { models: { Record } }) {
