@@ -45,6 +45,21 @@ const typeDefs = gql`
     # TODO: Add Reservation Mutation
 
     """
+    Create a new reservation
+    """
+    addReservation(input: AddReservationInput!): Reservation!
+
+    """
+    Delete an existing reservation
+    """
+    deleteReservation(input: DeleteReservationInput!): Reservation!
+
+    """
+    Edit an existing reservation
+    """
+    editReservation(input: EditReservationInput!): Reservation!
+
+    """
     Upload an image to imgur via URL
     """
     uploadImage(input: UploadImageInput!): Image!
@@ -61,6 +76,24 @@ const typeDefs = gql`
     Adds a new receipt record to an equipment document
     """
     addReceipt(input: AddReceiptInput): Receipt!
+  }
+
+  input AddReservationInput {
+    equipment: ObjectID!
+    project: NonEmptyString!
+    start: TimeStamp!
+    end: TimeStamp!
+  }
+
+  input DeleteReservationInput {
+    reservation: ObjectID!
+  }
+
+  input EditReservationInput {
+    reservation: ObjectID!
+    project: NonEmptyString
+    start: Timestamp
+    end: Timestamp
   }
 
   input CheckOutInput {
