@@ -80,8 +80,8 @@ const typeDefs = gql`
   input AddReservationInput {
     equipment: ObjectID!
     project: NonEmptyString!
-    start: TimeStamp!
-    end: TimeStamp!
+    start: Timestamp!
+    end: Timestamp!
   }
 
   input DeleteReservationInput {
