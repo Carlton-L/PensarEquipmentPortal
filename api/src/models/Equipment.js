@@ -9,6 +9,10 @@ const EquipmentSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  notes: {
+    type: String,
+    required: false,
+  },
   mfg: {
     type: String,
     required: true,

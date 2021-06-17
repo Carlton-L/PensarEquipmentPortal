@@ -75,6 +75,13 @@ const typeDefs = gql`
     Adds a new receipt record to an equipment document
     """
     addReceipt(input: AddReceiptInput): Receipt!
+    changeImageInfo(input: ChangeImageInfoInput): String!
+  }
+
+  input ChangeImageInfoInput {
+    hash: String!
+    title: String
+    description: String
   }
 
   input AddReservationInput {
@@ -169,6 +176,7 @@ const typeDefs = gql`
     id: ObjectID!
     qr: NonEmptyString!
     description: NonEmptyString!
+    notes: String
     mfg: NonEmptyString!
     mfgPn: String!
     mfgSn: String!
