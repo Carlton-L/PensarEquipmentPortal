@@ -22,6 +22,8 @@ const {
 // [ ] Handle Error: Bad file type (addCalibration, addReceipt) - FileTypeError
 // NOTE: Anywhere where a field in the schema contains a nested object (Type) but the mongoose model contains only an ObjectID, that field needs to have it's own resolver
 
+// TODO: Add comment mutation (need to generate IDs)
+
 module.exports = {
   EmailAddress: EmailAddressResolver,
   NonEmptyString: NonEmptyStringResolver,
@@ -69,15 +71,16 @@ module.exports = {
   Mutation: {
     addEquipment(
       _,
-      { input: { description, mfg, mfgPn, mfgSn } },
+      { input: { description, notes, mfg, mfgPn, mfgSn } },
       { user, models: { Equipment } }
     ) {
       // DONE: AddEquipment Mutation REsolver
       // user is a user object
-      // mfg, mfgPn, mfgSn, and description are Strings
+      // mfg, mfgPn, mfgSn, notes, and description are Strings
       return Equipment.create({
         qr: nanoid(9),
         description: description,
+        notes: notes,
         mfg: mfg,
         mfgPn: mfgPn,
         mfgSn: mfgSn,
@@ -94,7 +97,7 @@ module.exports = {
     },
     editEquipment(
       _,
-      { input: { id, qr, description, mfg, mfgPn, mfgSn, isActive } },
+      { input: { id, qr, description, notes, mfg, mfgPn, mfgSn, isActive } },
       { user, models: { Equipment } }
     ) {
       // DONE: EditEquipment Mutation Resolver
@@ -117,6 +120,7 @@ module.exports = {
             const equipmentFields = {};
             if (qr) equipmentFields.qr = qr;
             if (description) equipmentFields.description = description;
+            if (notes) equipmentFields.notes = notes;
             if (mfg) equipmentFields.mfg = mfg;
             if (mfgPn) equipmentFields.mfgPn = mfgPn;
             if (mfgSn) equipmentFields.mfgSn = mfgSn;
@@ -166,6 +170,21 @@ module.exports = {
             item.modified = +dayjs();
             return item.save();
           }
+        });
+    },
+    changeImageInfo(
+      _,
+      { input: { hash, title, description } },
+      { dataSources: { imgurAPI } }
+    ) {
+      return imgurAPI
+        .changeImageInfo(hash, title, description)
+        .then(({ data }) => {
+          return "Success!";
+        })
+        .catch((error) => {
+          console.error(error);
+          throw new ImgurError(error);
         });
     },
     checkOut(
